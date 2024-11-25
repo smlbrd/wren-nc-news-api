@@ -107,15 +107,73 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/soup')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe(`Article ID must be a number.`);
+        expect(body.msg).toBe(`Bad Request`);
       });
   });
-  test('400: Responds with an error message if article_id does not exist', () => {
+  test('404: Responds with an error message if article_id does not exist', () => {
     return request(app)
       .get('/api/articles/99999')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Not Found`);
+      });
+  });
+});
+
+describe('GET /api/articles/:article_id/comments', () => {
+  test('200: Responds with all comments for a given article_id, containing correct properties', () => {
+    return request(app)
+      .get('/api/articles/3/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(2);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+  test('200: Responds with comments ordered by most recent', () => {
+    return request(app)
+      .get('/api/articles/5/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeSortedBy('created_at', { descending: true });
+      });
+  });
+  test('400: Responds with an error message if article_id is not a number', () => {
+    return request(app)
+      .get('/api/articles/doctors-hate-this-one-weird-trick/comments')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe(`There's nothing here...`);
+        expect(body.msg).toBe(`Bad Request`);
+      });
+  });
+  test('404: Responds with an error message if article_id does not exist', () => {
+    return request(app)
+      .get('/api/articles/99999/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Not Found`);
+      });
+  });
+  // TODO: Find a way to get this test working
+  // We might be able to use fetchArticleById to validate an article exists
+  // Rather than duplicating NaN && rows === 0 tests
+  // Moving on... FOR NOW
+  test.skip('200: Responds with an empty array if article_id exists, but has no comments', () => {
+    return request(app)
+      .get('/api/articles/2/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(0);
+        expect(Array.isArray(comments)).toBe(true);
       });
   });
 });

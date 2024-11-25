@@ -26,7 +26,7 @@ exports.fetchArticleById = (article_id) => {
   if (isNaN(article_id)) {
     return Promise.reject({
       status: 400,
-      msg: `Article ID must be a number.`,
+      msg: `Bad Request`,
     });
   }
 
@@ -44,8 +44,8 @@ exports.fetchArticleById = (article_id) => {
   return db.query(queryString, [article_id]).then(({ rows }) => {
     if (rows.length === 0) {
       return Promise.reject({
-        status: 400,
-        msg: `There's nothing here...`,
+        status: 404,
+        msg: `Not Found`,
       });
     }
     return rows[0];
