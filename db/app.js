@@ -6,25 +6,27 @@ const { getApi } = require('../controllers/app.controllers');
 
 const { getTopics } = require('../controllers/topics.controllers');
 
-const { getArticleById } = require('../controllers/articles.controllers');
+const {
+  getArticles,
+  getArticleById,
+} = require('../controllers/articles.controllers');
 
 const {
   customErrorHandler,
-  psqlErrorHandler,
   serverErrorHandler,
-  notFoundErrorHandler
+  notFoundErrorHandler,
 } = require('../db/errors/index');
 
 app.get('/api', getApi);
 
 app.get('/api/topics', getTopics);
 
+app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id', getArticleById);
 
 app.all('*', notFoundErrorHandler);
 
 app.use(customErrorHandler);
-app.use(psqlErrorHandler);
 app.use(serverErrorHandler);
 
 module.exports = app;
