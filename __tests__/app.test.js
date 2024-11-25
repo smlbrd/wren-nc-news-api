@@ -160,14 +160,10 @@ describe('GET /api/articles/:article_id/comments', () => {
       .get('/api/articles/99999/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe(`Not Found`);
+        expect(body.msg).toBe(`Article not found`);
       });
   });
-  // TODO: Find a way to get this test working
-  // We might be able to use fetchArticleById to validate an article exists
-  // Rather than duplicating NaN && rows === 0 tests
-  // Moving on... FOR NOW
-  test.skip('200: Responds with an empty array if article_id exists, but has no comments', () => {
+  test('200: Responds with an empty array if article_id exists, but has no comments', () => {
     return request(app)
       .get('/api/articles/2/comments')
       .expect(200)

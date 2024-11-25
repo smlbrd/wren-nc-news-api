@@ -1,5 +1,7 @@
 const db = require('../db/connection');
 
+const { articleExists } = require('../db/seeds/utils');
+
 exports.fetchCommentsByArticleId = (article_id) => {
   if (isNaN(article_id)) {
     return Promise.reject({
@@ -18,13 +20,9 @@ exports.fetchCommentsByArticleId = (article_id) => {
     WHERE article_id = $1
     ORDER BY created_at DESC`;
 
-  return db.query(queryString, [article_id]).then(({ rows }) => {
-    if (rows.length === 0) {
-      return Promise.reject({
-        status: 404,
-        msg: `Not Found`,
-      });
-    }
-    return rows;
+  return articleExists(article_id).then(() => {
+    return db.query(queryString, [article_id]).then(({ rows }) => {
+      return rows;
+    });
   });
 };
