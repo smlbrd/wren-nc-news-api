@@ -19,6 +19,12 @@ exports.fetchCommentsByArticleId = (article_id) => {
     ORDER BY created_at DESC`;
 
   return db.query(queryString, [article_id]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: `Not Found`,
+      });
+    }
     return rows;
   });
 };

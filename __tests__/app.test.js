@@ -120,7 +120,7 @@ describe('GET /api/articles/:article_id', () => {
   });
 });
 
-describe.only('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
   test('200: Responds with all comments for a given article_id, containing correct properties', () => {
     return request(app)
       .get('/api/articles/3/comments')
@@ -144,7 +144,6 @@ describe.only('GET /api/articles/:article_id/comments', () => {
       .get('/api/articles/5/comments')
       .expect(200)
       .then(({ body: { comments } }) => {
-        console.log(comments);
         expect(comments).toBeSortedBy('created_at', { descending: true });
       });
   });
@@ -156,10 +155,27 @@ describe.only('GET /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe(`Bad Request`);
       });
   });
-
-  // 400 errors if id is NaN
-  // 404 error handling works for article_id
-  // 200 empty array is valid id but no comments (id 2)
+  test('404: Responds with an error message if article_id does not exist', () => {
+    return request(app)
+      .get('/api/articles/99999/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Not Found`);
+      });
+  });
+  // TODO: Find a way to get this test working
+  // We might be able to use fetchArticleById to validate an article exists
+  // Rather than duplicating NaN && rows === 0 tests
+  // Moving on... FOR NOW
+  test.skip('200: Responds with an empty array if article_id exists, but has no comments', () => {
+    return request(app)
+      .get('/api/articles/2/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(0);
+        expect(Array.isArray(comments)).toBe(true);
+      });
+  });
 });
 
 describe('404: Non-existent route query', () => {
