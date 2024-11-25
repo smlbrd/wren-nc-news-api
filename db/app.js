@@ -6,12 +6,25 @@ const { getApi } = require('../controllers/app.controllers');
 
 const { getTopics } = require('../controllers/topics.controllers');
 
+const { getArticleById } = require('../controllers/articles.controllers');
+
+const {
+  customErrorHandler,
+  psqlErrorHandler,
+  serverErrorHandler,
+  notFoundErrorHandler
+} = require('../db/errors/index');
+
 app.get('/api', getApi);
 
 app.get('/api/topics', getTopics);
 
-app.all('*', (req, res) => {
-  res.status(404).send({ msg: `Sorry, there's nothing here!` });
-});
+app.get('/api/articles/:article_id', getArticleById);
+
+app.all('*', notFoundErrorHandler);
+
+app.use(customErrorHandler);
+app.use(psqlErrorHandler);
+app.use(serverErrorHandler);
 
 module.exports = app;
