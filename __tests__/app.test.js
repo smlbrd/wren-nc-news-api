@@ -120,8 +120,8 @@ describe('GET /api/articles/:article_id', () => {
   });
 });
 
-describe('GET /api/articles/:article_id/comments', () => {
-  test.only('200: Responds with all comments for a given article_id', () => {
+describe.only('GET /api/articles/:article_id/comments', () => {
+  test('200: Responds with all comments for a given article_id, containing correct properties', () => {
     return request(app)
       .get('/api/articles/3/comments')
       .expect(200)
@@ -139,10 +139,27 @@ describe('GET /api/articles/:article_id/comments', () => {
         });
       });
   });
-  // 200 each comment has the appropriate properties
-  // 200 comments are ordered by creation date, in descending order
+  test('200: Responds with comments ordered by most recent', () => {
+    return request(app)
+      .get('/api/articles/5/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        console.log(comments);
+        expect(comments).toBeSortedBy('created_at', { descending: true });
+      });
+  });
+  test('400: Responds with an error message if article_id is not a number', () => {
+    return request(app)
+      .get('/api/articles/doctors-hate-this-one-weird-trick/comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad Request`);
+      });
+  });
+
+  // 400 errors if id is NaN
   // 404 error handling works for article_id
-  // 400 errors if no id submitted
+  // 200 empty array is valid id but no comments (id 2)
 });
 
 describe('404: Non-existent route query', () => {
