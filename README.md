@@ -6,6 +6,7 @@
   + [Cloning this repository](#cloning)
   + [Installing dependencies](#dependencies)
   + [Database setup](#database_setup)
+  + [Database seeding](#database-seeding)
 
 ## About <a name = "about"></a>
 
@@ -47,11 +48,13 @@ npm install
 This project gratefully depends on:
 
 + [dotenv](https://github.com/motdotla/dotenv#readme)
++ [express.js](http://expressjs.com/)
 + [husky](https://github.com/typicode/husky#readme)
 + [jest](https://jestjs.io/)
 + [jest-extended](https://github.com/jest-community/jest-extended)
 + [pg](https://github.com/brianc/node-postgres)
 + [pg-format](https://github.com/datalanche/node-pg-format)
++ [supertest](github.com/ladjs/supertest#readme)
 
 #### Database setup <a name = "database_setup"></a>
 
@@ -64,6 +67,14 @@ To set up test and development databases and run this API, create these 2 files 
   - This file should contain: `PGDATABASE_nc_news`
 
 Now we're ready to seed our databases!
+
+#### Database seeding <a name = "database_seeding"></a>
+
+Now we have our databases set up, we can seed them with the following command:
+
+```bash
+npm run setup-dbs
+```
 
 --- 
 
