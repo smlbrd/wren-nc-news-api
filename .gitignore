@@ -1,2 +1,4 @@
 node_modules
 .env.*
+db/scratch.sql
+db/scratch.txt

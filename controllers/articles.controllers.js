@@ -1,6 +1,6 @@
 const {
   fetchArticles,
-  fetchArticleById,
+  fetchArticleById
 } = require('../models/articles.models');
 
 exports.getArticles = (req, res, next) => {

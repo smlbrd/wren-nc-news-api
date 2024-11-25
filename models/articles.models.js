@@ -26,7 +26,7 @@ exports.fetchArticleById = (article_id) => {
   if (isNaN(article_id)) {
     return Promise.reject({
       status: 400,
-      msg: `Bad request!`,
+      msg: `Bad Request`,
     });
   }
 
@@ -45,7 +45,7 @@ exports.fetchArticleById = (article_id) => {
     if (rows.length === 0) {
       return Promise.reject({
         status: 404,
-        msg: `There's nothing here...`,
+        msg: `Not Found`,
       });
     }
     return rows[0];

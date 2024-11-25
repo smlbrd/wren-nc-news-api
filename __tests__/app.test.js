@@ -107,7 +107,7 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/soup')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe(`Bad request!`);
+        expect(body.msg).toBe(`Bad Request`);
       });
   });
   test('404: Responds with an error message if article_id does not exist', () => {
@@ -115,17 +115,35 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/99999')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe(`There's nothing here...`);
+        expect(body.msg).toBe(`Not Found`);
       });
   });
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
-  // 200 responds with all comments for a given article id
-  test('200', () => {})
+  test.only('200: Responds with all comments for a given article_id', () => {
+    return request(app)
+      .get('/api/articles/3/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(2);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
   // 200 each comment has the appropriate properties
-  // 400 
-})
+  // 200 comments are ordered by creation date, in descending order
+  // 404 error handling works for article_id
+  // 400 errors if no id submitted
+});
 
 describe('404: Non-existent route query', () => {
   test('404: request to non-existent route', () => {
