@@ -12,6 +12,12 @@ exports.fetchArticleById = (article_id) => {
     WHERE article_id = $1`;
 
   return db.query(queryString, [article_id]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({
+        status: 400,
+        msg: `There's nothing here...`
+      })
+    }
     return rows[0];
   });
 };

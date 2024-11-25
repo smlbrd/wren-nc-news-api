@@ -68,7 +68,14 @@ describe('GET /api/articles/:article_id', () => {
         expect(body.msg).toBe(`Article ID must be a number.`);
       });
   });
-  // well-formed article id not in the database e.g. 99999
+  test('400: Responds with an error message if article_id does not exist', () => {
+    return request(app)
+      .get('/api/articles/99999')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`There's nothing here...`);
+      });
+  });
 });
 
 describe('404: Non-existent route query', () => {
