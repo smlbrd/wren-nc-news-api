@@ -32,18 +32,16 @@ describe('GET /api/topics', () => {
       .then(({ body: { topics } }) => {
         expect(topics.length).toBe(3);
         topics.forEach((topic) => {
-          expect(topic).toEqual(
-            expect.objectContaining({
-              slug: expect.any(String),
-              description: expect.any(String),
-            })
-          );
+          expect(topic).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
         });
       });
   });
 });
 
-describe.only('GET /api/articles/:article_id', () => {
+describe('GET /api/articles/:article_id', () => {
   test('200: Responds with the article linked to :article_id', () => {
     return request(app)
       .get('/api/articles/1')
@@ -76,7 +74,7 @@ describe.only('GET /api/articles/:article_id', () => {
 describe('404: Non-existent route query', () => {
   test('404: request to non-existent route', () => {
     return request(app)
-      .get('/api/topisc')
+      .get('/api/grandma_s_perfect_autumn_strudel_recipe')
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe(`Sorry, there's nothing here!`);
