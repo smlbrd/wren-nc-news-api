@@ -1,12 +1,13 @@
 # Northcoders News API
 
 ## Table of Contents
-+ [About](#about)
-+ [Getting Started](#getting_started)
-  + [Cloning this repository](#cloning)
-  + [Installing dependencies](#dependencies)
-  + [Database setup](#database_setup)
-  + [Database seeding](#database-seeding)
+
+- [About](#about)
+- [Getting Started](#getting_started)
+  - [Cloning this repository](#cloning)
+  - [Installing dependencies](#dependencies)
+  - [Database setup](#database_setup)
+  - [Database seeding](#database-seeding)
 
 ## About <a name = "about"></a>
 
@@ -47,20 +48,22 @@ npm install
 
 This project gratefully depends on:
 
-+ [dotenv](https://github.com/motdotla/dotenv#readme)
-+ [express.js](http://expressjs.com/)
-+ [husky](https://github.com/typicode/husky#readme)
-+ [jest](https://jestjs.io/)
-+ [jest-extended](https://github.com/jest-community/jest-extended)
-+ [pg](https://github.com/brianc/node-postgres)
-+ [pg-format](https://github.com/datalanche/node-pg-format)
-+ [supertest](github.com/ladjs/supertest#readme)
+- [dotenv](https://github.com/motdotla/dotenv#readme)
+- [express.js](http://expressjs.com/)
+- [husky](https://github.com/typicode/husky#readme)
+- [jest](https://jestjs.io/)
+- [jest-extended](https://github.com/jest-community/jest-extended)
+- [jest-sorted](https://github.com/P-Copley/jest-sorted#readme)
+- [pg](https://github.com/brianc/node-postgres)
+- [pg-format](https://github.com/datalanche/node-pg-format)
+- [supertest](github.com/ladjs/supertest#readme)
 
 #### Database setup <a name = "database_setup"></a>
 
 To set up test and development databases and run this API, create these 2 files in the root of your directory:
 
 - `.env.test`
+
   - This file should contain: `PGDATABASE=nc_news_test`
 
 - `.env.development`
@@ -76,6 +79,6 @@ Now we have our databases set up, we can seed them with the following command:
 npm run setup-dbs
 ```
 
---- 
+---
 
 This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
