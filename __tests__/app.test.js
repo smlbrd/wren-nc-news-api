@@ -107,18 +107,25 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/soup')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe(`Article ID must be a number.`);
+        expect(body.msg).toBe(`Bad request!`);
       });
   });
-  test('400: Responds with an error message if article_id does not exist', () => {
+  test('404: Responds with an error message if article_id does not exist', () => {
     return request(app)
       .get('/api/articles/99999')
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe(`There's nothing here...`);
       });
   });
 });
+
+describe('GET /api/articles/:article_id/comments', () => {
+  // 200 responds with all comments for a given article id
+  test('200', () => {})
+  // 200 each comment has the appropriate properties
+  // 400 
+})
 
 describe('404: Non-existent route query', () => {
   test('404: request to non-existent route', () => {
