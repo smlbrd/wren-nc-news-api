@@ -1,6 +1,6 @@
 const db = require('../db/connection');
 
-const { articleExists } = require('../db/seeds/utils');
+const { checkArticleExists } = require('../db/seeds/utils');
 
 exports.fetchCommentsByArticleId = (article_id) => {
   if (isNaN(article_id)) {
@@ -20,7 +20,7 @@ exports.fetchCommentsByArticleId = (article_id) => {
     WHERE article_id = $1
     ORDER BY created_at DESC`;
 
-  return articleExists(article_id).then(() => {
+  return checkArticleExists(article_id).then(() => {
     return db.query(queryString, [article_id]).then(({ rows }) => {
       return rows;
     });
