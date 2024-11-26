@@ -189,7 +189,6 @@ describe('POST /api/articles/:article_id/comments', () => {
       });
   });
 });
-// 201 new comment created, returns comment
 // 400 article_id is NaN (invalid req)
 // 400 username doesn't exist (invalid req)
 // 404 username or body missing from req.body
