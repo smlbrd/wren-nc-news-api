@@ -1,15 +1,6 @@
 const db = require('../db/connection');
 
-const { checkArticleExists } = require('../db/seeds/utils');
-
 exports.fetchCommentsByArticleId = (article_id) => {
-  if (isNaN(article_id)) {
-    return Promise.reject({
-      status: 400,
-      msg: `Bad Request`,
-    });
-  }
-
   const queryString = `SELECT comment_id
     , votes
     , created_at
@@ -20,9 +11,27 @@ exports.fetchCommentsByArticleId = (article_id) => {
     WHERE article_id = $1
     ORDER BY created_at DESC`;
 
-  return checkArticleExists(article_id).then(() => {
-    return db.query(queryString, [article_id]).then(({ rows }) => {
-      return rows;
-    });
+  return db.query(queryString, [article_id]).then(({ rows }) => {
+    return rows;
   });
+};
+
+exports.addCommentByArticleId = (article_id, username, body) => {
+  if (!username || !body) {
+    return Promise.reject({
+      status: 404,
+      msg: `Not Found`,
+    });
+  }
+
+  const queryString = `INSERT INTO comments (article_id, author, body)
+  VALUES
+  ($1, $2, $3)
+  RETURNING *`;
+
+  return db
+    .query(queryString, [article_id, username, body])
+    .then(({ rows }) => {
+      return rows[0];
+    });
 };

@@ -8,7 +8,7 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "scratch": "psql -f scratch.sql > scratch.txt"
+    "scratch": "psql -f scratch/scratch.sql > scratch/scratch.txt"
   },
   "repository": {
     "type": "git",

@@ -13,13 +13,17 @@ const {
 
 const {
   getCommentsByArticleId,
+  postCommentByArticleId,
 } = require('../controllers/comments.controllers');
 
 const {
   customErrorHandler,
+  psqlErrorHandler,
   serverErrorHandler,
   notFoundErrorHandler,
 } = require('../db/errors/index');
+
+app.use(express.json());
 
 app.get('/api', getApi);
 
@@ -30,9 +34,12 @@ app.get('/api/articles/:article_id', getArticleById);
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
+app.post('/api/articles/:article_id/comments', postCommentByArticleId);
+
 app.all('*', notFoundErrorHandler);
 
 app.use(customErrorHandler);
+app.use(psqlErrorHandler);
 app.use(serverErrorHandler);
 
 module.exports = app;
