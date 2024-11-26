@@ -216,7 +216,18 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Bad Request');
       });
   });
-  test('404: Responds with an error message if username missing from request', () => {
+  test('400: Responds with an error message if body missing from request', () => {
+    const testComment = {};
+
+    return request(app)
+      .post('/api/articles/5/comments')
+      .send(testComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if username missing from request', () => {
     const testComment = {
       body: "post this anywhere I don't mind",
     };
@@ -224,22 +235,9 @@ describe('POST /api/articles/:article_id/comments', () => {
     return request(app)
       .post('/api/articles/4/comments')
       .send(testComment)
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
-      });
-  });
-  test('404: Responds with an error message if body missing from request', () => {
-    const testComment = {
-      username: 'soVeryShy',
-    };
-
-    return request(app)
-      .post('/api/articles/5/comments')
-      .send(testComment)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+        expect(body.msg).toBe('Bad Request');
       });
   });
   test("404: Responds with an error message if article_id doesn't exist", () => {

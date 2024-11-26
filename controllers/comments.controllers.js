@@ -23,7 +23,7 @@ exports.postCommentByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
-  checkArticleExists(article_id)
+  return checkArticleExists(article_id)
     .then(() => {
       return addCommentByArticleId(article_id, username, body);
     })
