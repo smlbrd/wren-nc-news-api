@@ -113,6 +113,87 @@ describe('GET /api/articles/:article_id', () => {
   });
 });
 
+describe('PATCH /api/articles/:article_id', () => {
+  test('201: Responds with article including updated vote count for given article_id', () => {
+    const testBody = {
+      inc_votes: 1,
+    };
+
+    return request(app)
+      .patch('/api/articles/2')
+      .send(testBody)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article.votes).toBe(1);
+      });
+  });
+  test('400: Responds with an error message if article_id is NaN', () => {
+    const testBody = {
+      inc_votes: 2,
+    };
+
+    return request(app)
+      .patch(
+        '/api/articles/lo-cost-scalding-hot-soups-to-burn-mouth-and-taste-nothing-to'
+      )
+      .send(testBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if request is empty object', () => {
+    const testBody = {};
+
+    return request(app)
+      .patch('/api/articles/3')
+      .send(testBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if request key is not inc_votes', () => {
+    const testBody = {
+      "that_key_ain't_right": 1,
+    };
+
+    return request(app)
+      .patch('/api/articles/4')
+      .send(testBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if request value is NaN', () => {
+    const testBody = {
+      inc_votes: 'one-hundred-thousand',
+    };
+
+    return request(app)
+      .patch('/api/articles/5')
+      .send(testBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+  test("404: Responds with an error message is article_id doesn't exist", () => {
+    const testBody = {
+      inc_votes: 10,
+    };
+
+    return request(app)
+      .patch('/api/articles/99999')
+      .send(testBody)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not Found');
+      });
+  });
+});
+
 describe('GET /api/articles/:article_id/comments', () => {
   test('200: Responds with all comments for a given article_id, containing correct properties', () => {
     return request(app)
