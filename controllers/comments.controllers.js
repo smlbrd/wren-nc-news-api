@@ -10,7 +10,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
   const promiseArr = [fetchCommentsByArticleId(article_id)];
 
   if (article_id) {
-    promiseArr.push(checkExists("articles", "article_id", article_id));
+    promiseArr.push(checkExists('articles', 'article_id', article_id));
   }
 
   Promise.all(promiseArr)
@@ -24,7 +24,7 @@ exports.postCommentByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
-  return checkExists("articles", "article_id", article_id)
+  return checkExists('articles', 'article_id', article_id)
     .then(() => {
       return addCommentByArticleId(article_id, username, body);
     })
@@ -37,7 +37,10 @@ exports.postCommentByArticleId = (req, res, next) => {
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
 
-  return removeCommentById(comment_id)
+  return checkExists('comments', 'comment_id', comment_id)
+    .then(() => {
+      return removeCommentById(comment_id);
+    })
     .then(() => {
       res.status(204).send();
     })
