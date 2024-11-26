@@ -76,6 +76,17 @@ describe('GET /api/articles', () => {
   });
 });
 
+describe('GET /api/articles?sort_by', () => {
+  test('200: Responds with an array sorted by article_id ', () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy('article_id', { descending: true });
+      });
+  });
+});
+
 describe('GET /api/articles/:article_id', () => {
   test('200: Responds with the article linked to :article_id', () => {
     return request(app)
