@@ -15,8 +15,10 @@ const {
 const {
   getCommentsByArticleId,
   postCommentByArticleId,
-  deleteCommentById
+  deleteCommentById,
 } = require('../controllers/comments.controllers');
+
+const { getUsers } = require('../controllers/users.controllers');
 
 const {
   customErrorHandler,
@@ -39,6 +41,8 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 app.post('/api/articles/:article_id/comments', postCommentByArticleId);
 
 app.delete('/api/comments/:comment_id', deleteCommentById);
+
+app.get('/api/users', getUsers);
 
 app.all('*', notFoundErrorHandler);
 
