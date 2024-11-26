@@ -62,7 +62,7 @@ describe('GET /api/articles', () => {
         });
       });
   });
-  test('200: Responds with an array sorted by date, in descending order, with no body property', () => {
+  test('200: Responds with an array sorted by created_at, default descending order, containing no body property', () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
@@ -72,6 +72,64 @@ describe('GET /api/articles', () => {
         articles.forEach((article) => {
           expect(article).not.toHaveProperty('body');
         });
+      });
+  });
+});
+
+describe('GET /api/articles?sort_by', () => {
+  test('200: Responds with an array sorted by article_id, default descending order', () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy('article_id', { descending: true });
+      });
+  });
+  test('200: Responds with an array sorted by title, default descending order', () => {
+    return request(app)
+      .get('/api/articles?sort_by=title')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy('title', { descending: true });
+      });
+  });
+  test('400: Responds with an error message if invalid sort_by query', () => {
+    return request(app)
+      .get('/api/articles?sort_by=mouthfeel')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+});
+
+describe('GET /api/articles?order', () => {
+  test('200: Responds with an array sorted in ascending order, default sort_by query (created_at)', () => {
+    return request(app)
+      .get('/api/articles?order=ASC')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy('created_at', { ascending: true });
+      });
+  });
+  test('200: Responds with an array sorted in ascending order, custom (valid) sort_by query', () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id&order=ASC')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy('article_id', { ascending: true });
+      });
+  });
+  test('400: Responds with an error message if invalid order query', () => {
+    return request(app)
+      .get('/api/articles?order=shuffle')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
       });
   });
 });
