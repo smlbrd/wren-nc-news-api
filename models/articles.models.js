@@ -1,7 +1,7 @@
 const db = require('../db/connection');
 
-exports.fetchArticles = (sort_by = 'created_at') => {
-  const validSorts = [
+exports.fetchArticles = (sort_by = 'created_at', order = 'DESC') => {
+  const validSortBy = [
     'created_at',
     'article_id',
     'title',
@@ -9,6 +9,8 @@ exports.fetchArticles = (sort_by = 'created_at') => {
     'author',
     'votes',
   ];
+
+  const validOrder = ['ASC', 'DESC'];
 
   let queryString = `SELECT articles.article_id
   , articles.title
@@ -23,11 +25,11 @@ exports.fetchArticles = (sort_by = 'created_at') => {
   ON articles.article_id = comments.article_id
   GROUP BY articles.article_id`;
 
-  if (!validSorts.includes(sort_by)) {
-    return Promise.reject({ status: 400, msg: 'Invalid sort parameter!' });
+  if (!validSortBy.includes(sort_by) || !validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: 'Bad Request' });
   }
 
-  queryString += ` ORDER BY ${sort_by} DESC`;
+  queryString += ` ORDER BY ${sort_by} ${order}`;
 
   return db.query(queryString).then(({ rows }) => {
     return rows;
