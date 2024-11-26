@@ -30,6 +30,8 @@ app.get('/api/articles/:article_id', getArticleById);
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
+
+
 app.all('*', notFoundErrorHandler);
 
 app.use(customErrorHandler);

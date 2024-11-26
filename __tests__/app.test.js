@@ -160,7 +160,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       .get('/api/articles/99999/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe(`Article not found`);
+        expect(body.msg).toBe(`not found`);
       });
   });
   test('200: Responds with an empty array if article_id exists, but has no comments', () => {
@@ -173,6 +173,21 @@ describe('GET /api/articles/:article_id/comments', () => {
       });
   });
 });
+
+// POST
+
+/* 
+I'm a simple developer
+merging branches is pain
+so once more with feeling:
+git push origin main!!
+*/
+
+
+// 201 new comment created, returns comment
+// 400 article_id is NaN
+// 404 invalid data - username or body missing
+// 404 article doesn't exist (use utils)
 
 describe('404: Non-existent route query', () => {
   test('404: request to non-existent route', () => {
