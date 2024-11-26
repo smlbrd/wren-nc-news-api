@@ -1,13 +1,6 @@
 const db = require('../db/connection');
 
 exports.fetchCommentsByArticleId = (article_id) => {
-  if (isNaN(article_id)) {
-    return Promise.reject({
-      status: 400,
-      msg: `Bad Request`,
-    });
-  }
-
   const queryString = `SELECT comment_id
     , votes
     , created_at
@@ -24,6 +17,13 @@ exports.fetchCommentsByArticleId = (article_id) => {
 };
 
 exports.addCommentByArticleId = (article_id, username, body) => {
+  if (!username || !body) {
+    return Promise.reject({
+      status: 404,
+      msg: `Not Found`,
+    });
+  }
+
   const queryString = `INSERT INTO comments (article_id, author, body)
   VALUES
   ($1, $2, $3)

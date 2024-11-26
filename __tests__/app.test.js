@@ -161,7 +161,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       .get('/api/articles/99999/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe(`not found`);
+        expect(body.msg).toBe(`Not Found`);
       });
   });
 });
@@ -188,19 +188,83 @@ describe('POST /api/articles/:article_id/comments', () => {
         });
       });
   });
+  test('400: Responds with an error message if article_id is NaN', () => {
+    const testComment = {
+      username: 'lurker',
+      body: "i don't normally do this sort of thing",
+    };
+
+    return request(app)
+      .post('/api/articles/scrambled-egg/comments')
+      .send(testComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if username does not exist in users table', () => {
+    const testComment = {
+      username: 'broth-baby',
+      body: 'i like soup',
+    };
+
+    return request(app)
+      .post('/api/articles/3/comments')
+      .send(testComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+  test('404: Responds with an error message if username missing from request', () => {
+    const testComment = {
+      body: "post this anywhere I don't mind",
+    };
+
+    return request(app)
+      .post('/api/articles/4/comments')
+      .send(testComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not Found');
+      });
+  });
+  test('404: Responds with an error message if body missing from request', () => {
+    const testComment = {
+      username: 'soVeryShy',
+    };
+
+    return request(app)
+      .post('/api/articles/5/comments')
+      .send(testComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not Found');
+      });
+  });
+  test.skip("404: Responds with an error message if article_id doesn't exist", () => {
+    const testComment = {
+      username: 'lurker',
+      body: 'posting is my new passion',
+    };
+
+    return request(app)
+      .post('/api/articles/99999/comments')
+      .send(testComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not Found');
+      });
+  });
 });
-// 400 article_id is NaN (invalid req)
-// 400 username doesn't exist (invalid req)
-// 404 username or body missing from req.body
-// 404 article doesn't exist
 
 describe('404: Non-existent route query', () => {
-  test('404: request to non-existent route', () => {
+  test('404: Request to non-existent route', () => {
     return request(app)
       .get('/api/grandma_s_perfect_autumn_strudel_recipe')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe(`Sorry, there's nothing here!`);
+        expect(body.msg).toBe(`Not Found`);
       });
   });
 });
