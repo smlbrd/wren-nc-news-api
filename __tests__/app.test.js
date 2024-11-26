@@ -242,7 +242,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Not Found');
       });
   });
-  test.skip("404: Responds with an error message if article_id doesn't exist", () => {
+  test("404: Responds with an error message if article_id doesn't exist", () => {
     const testComment = {
       username: 'lurker',
       body: 'posting is my new passion',
