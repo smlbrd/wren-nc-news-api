@@ -77,7 +77,7 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/articles?sort_by', () => {
-  test('200: Responds with an array sorted by article_id ', () => {
+  test('200: Responds with an array sorted by article_id upon request', () => {
     return request(app)
       .get('/api/articles?sort_by=article_id')
       .expect(200)
@@ -85,6 +85,22 @@ describe('GET /api/articles?sort_by', () => {
         expect(articles).toBeSortedBy('article_id', { descending: true });
       });
   });
+  test('200: Responds with an array sorted by title upon request', () => {
+    return request(app)
+      .get('/api/articles?sort_by=title')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy('title', { descending: true });
+      });
+  });
+  test('400: Responds with an error message if invalid sort_by query', () => {
+    return request(app)
+      .get('/api/articles?sort_by=mouthfeel')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid sort parameter!')
+      })
+  })
 });
 
 describe('GET /api/articles/:article_id', () => {

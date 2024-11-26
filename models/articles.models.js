@@ -1,6 +1,15 @@
 const db = require('../db/connection');
 
 exports.fetchArticles = (sort_by = 'created_at') => {
+  const validSorts = [
+    'created_at',
+    'article_id',
+    'title',
+    'topic',
+    'author',
+    'votes',
+  ];
+
   let queryString = `SELECT articles.article_id
   , articles.title
   , articles.topic
@@ -13,6 +22,10 @@ exports.fetchArticles = (sort_by = 'created_at') => {
   JOIN comments
   ON articles.article_id = comments.article_id
   GROUP BY articles.article_id`;
+
+  if (!validSorts.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: 'Invalid sort parameter!' });
+  }
 
   queryString += ` ORDER BY ${sort_by} DESC`;
 
