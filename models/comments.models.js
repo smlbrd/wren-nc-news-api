@@ -22,3 +22,17 @@ exports.fetchCommentsByArticleId = (article_id) => {
     return rows;
   });
 };
+
+exports.addCommentByArticleId = (article_id, username, body) => {
+  const queryString = `INSERT INTO comments (article_id, author, body)
+  VALUES
+  ($1, $2, $3)
+  RETURNING *`;
+
+  return db
+    .query(queryString, [article_id, username, body])
+    .then(({ rows }) => {
+      console.log(rows[0])
+      return rows[0];
+    });
+};

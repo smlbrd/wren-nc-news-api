@@ -57,24 +57,17 @@ describe('GET /api/articles', () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
-            comment_count: expect.any(String),
+            comment_count: expect.any(Number),
           });
         });
       });
   });
-  test('200: Responds with an array sorted by date, in descending order', () => {
+  test('200: Responds with an array sorted by date, in descending order, with no body property', () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toBeSortedBy('created_at', { descending: true });
-      });
-  });
-  test('200: Returned objects do not contain article.body property', () => {
-    return request(app)
-      .get('/api/articles')
-      .expect(200)
-      .then(({ body: { articles } }) => {
         expect(articles.length).toBe(5);
         articles.forEach((article) => {
           expect(article).not.toHaveProperty('body');
@@ -134,7 +127,7 @@ describe('GET /api/articles/:article_id/comments', () => {
             created_at: expect.any(String),
             author: expect.any(String),
             body: expect.any(String),
-            article_id: expect.any(Number),
+            article_id: 3,
           });
         });
       });
@@ -145,6 +138,14 @@ describe('GET /api/articles/:article_id/comments', () => {
       .expect(200)
       .then(({ body: { comments } }) => {
         expect(comments).toBeSortedBy('created_at', { descending: true });
+      });
+  });
+  test('200: Responds with an empty array if article_id exists, but has no comments', () => {
+    return request(app)
+      .get('/api/articles/2/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toEqual([]);
       });
   });
   test('400: Responds with an error message if article_id is not a number', () => {
@@ -163,31 +164,36 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe(`not found`);
       });
   });
-  test('200: Responds with an empty array if article_id exists, but has no comments', () => {
+});
+
+describe('POST /api/articles/:article_id/comments', () => {
+  test('201: Responds with a new comment created at a given article_id', () => {
+    const testComment = {
+      username: 'butter_bridge',
+      body: "when are y'all gonna start posting recipes on this site?",
+    };
+
     return request(app)
-      .get('/api/articles/2/comments')
-      .expect(200)
-      .then(({ body: { comments } }) => {
-        expect(comments.length).toBe(0);
-        expect(Array.isArray(comments)).toBe(true);
+      .post('/api/articles/1/comments')
+      .send(testComment)
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment).toMatchObject({
+          article_id: 1,
+          author: 'butter_bridge',
+          body: "when are y'all gonna start posting recipes on this site?",
+          comment_id: expect.any(Number),
+          created_at: expect.any(String),
+          votes: 0,
+        });
       });
   });
 });
-
-// POST
-
-/* 
-I'm a simple developer
-merging branches is pain
-so once more with feeling:
-git push origin main!!
-*/
-
-
 // 201 new comment created, returns comment
-// 400 article_id is NaN
-// 404 invalid data - username or body missing
-// 404 article doesn't exist (use utils)
+// 400 article_id is NaN (invalid req)
+// 400 username doesn't exist (invalid req)
+// 404 username or body missing from req.body
+// 404 article doesn't exist
 
 describe('404: Non-existent route query', () => {
   test('404: request to non-existent route', () => {
