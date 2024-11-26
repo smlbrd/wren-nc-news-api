@@ -337,6 +337,28 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
 });
 
+describe('DELETE /api/comments/comment_id', () => {
+  test('204: Responds with status code after deleting given comment_id from table', () => {
+    return request(app).delete('/api/comments/2').expect(204);
+  });
+  test('400: Responds with an error message if comment_id is NaN', () => {
+    return request(app)
+      .delete('/api/comments/begone-comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+  });
+  test("404: Responds with an error message if comment_id doesn't exist", () => {
+    return request(app)
+      .delete('/api/comments/99999')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not Found');
+      });
+  });
+});
+
 describe('404: Non-existent route query', () => {
   test('404: Request to non-existent route', () => {
     return request(app)
