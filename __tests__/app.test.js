@@ -134,6 +134,25 @@ describe('GET /api/articles?order', () => {
   });
 });
 
+describe('GET /api/articles?topic', () => {
+  test('200: Responds with an array of articles matching topic query', () => {
+    return request(app)
+      .get('/api/articles?topic=mitch')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        console.log(articles)
+        expect(articles.length).toBe(4);
+        articles.forEach((article) => {
+          expect(article.topic).toBe('mitch');
+        });
+      });
+  });
+});
+
+// 200 responds with all articles if input omitted / topic exists, no match
+// 400 topic is invalid
+// 404 topic does not exist
+
 describe('GET /api/articles/:article_id', () => {
   test('200: Responds with the article linked to :article_id', () => {
     return request(app)
@@ -185,6 +204,7 @@ describe('PATCH /api/articles/:article_id', () => {
         expect(article.votes).toBe(1);
       });
   });
+  // TODO: 201 votes value can be negative!!
   test('400: Responds with an error message if article_id is NaN', () => {
     const testBody = {
       inc_votes: 2,

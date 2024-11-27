@@ -5,11 +5,18 @@ const {
   updateArticleById,
 } = require('../models/articles.models');
 
-exports.getArticles = (req, res, next) => {
-  const { sort_by, order } = req.query;
+const { fetchTopicsBySlug } = require('../models/topics.models');
 
-  fetchArticles(sort_by, order)
-    .then((articles) => {
+exports.getArticles = (req, res, next) => {
+  const { sort_by, order, topic } = req.query;
+  const promiseArr = [fetchArticles(sort_by, order, topic)];
+
+  if (topic) {
+    promiseArr.push(fetchArticles(sort_by, order, topic));
+  }
+
+  Promise.all(promiseArr)
+    .then(([articles]) => {
       res.status(200).send({ articles });
     })
     .catch(next);
