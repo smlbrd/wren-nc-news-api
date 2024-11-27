@@ -1,5 +1,21 @@
 const { checkExists } = require('../db/seeds/utils');
-const { removeCommentById } = require('../models/comments.models');
+const {
+  updateCommentById,
+  removeCommentById,
+} = require('../models/comments.models');
+
+exports.patchCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+
+  return checkExists('comments', 'comment_id', comment_id)
+    .then(() => {
+      return updateCommentById(comment_id, inc_votes).then((comment) => {
+        res.status(200).send({ comment });
+      });
+    })
+    .catch(next);
+};
 
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
