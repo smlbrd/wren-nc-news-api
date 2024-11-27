@@ -9,14 +9,16 @@ const { fetchTopicsBySlug } = require('../models/topics.models');
 
 exports.getArticles = (req, res, next) => {
   const { sort_by, order, topic } = req.query;
-  const promiseArr = [fetchArticles(sort_by, order, topic)];
 
-  if (topic) {
-    promiseArr.push(fetchArticles(sort_by, order, topic));
-  }
-
-  Promise.all(promiseArr)
-    .then(([articles]) => {
+  // fetchTopicsBySlug(topic)
+  //   .then((topicExists) => {
+  //     return topicExists
+  //       ? fetchArticles(sort_by, order, topic)
+  //       : fetchArticles(sort_by, order);
+  //   })
+  //   .then((articles) => {
+    fetchArticles(sort_by, order, topic)
+    .then((articles)=>{
       res.status(200).send({ articles });
     })
     .catch(next);
@@ -39,7 +41,7 @@ exports.patchArticleById = (req, res, next) => {
   checkExists('articles', 'article_id', article_id)
     .then(() => {
       return updateArticleById(article_id, inc_votes).then((article) => {
-        res.status(201).send({ article });
+        res.status(200).send({ article });
       });
     })
     .catch(next);

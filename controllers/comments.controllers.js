@@ -26,6 +26,7 @@ exports.postCommentByArticleId = (req, res, next) => {
 
   return checkExists('articles', 'article_id', article_id)
     .then(() => {
+      // TODO: Add check for username exists here
       return addCommentByArticleId(article_id, username, body);
     })
     .then((comment) => {
