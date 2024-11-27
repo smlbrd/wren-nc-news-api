@@ -37,7 +37,10 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   }
 
   if (!validOrder.includes(order)) {
-    return Promise.reject({ status: 400, msg: 'Invalid order parameter - please choose ASC or DESC' });
+    return Promise.reject({
+      status: 400,
+      msg: 'Invalid order parameter - please choose ASC or DESC',
+    });
   }
 
   queryString += ` GROUP BY articles.article_id 
@@ -91,4 +94,40 @@ exports.updateArticleById = (article_id, inc_votes) => {
   return db.query(queryString, [inc_votes, article_id]).then(({ rows }) => {
     return rows[0];
   });
+};
+
+exports.fetchCommentsByArticleId = (article_id) => {
+  const queryString = `SELECT comment_id
+    , votes
+    , created_at
+    , author
+    , body
+    , article_id
+    FROM comments
+    WHERE article_id = $1
+    ORDER BY created_at DESC`;
+
+  return db.query(queryString, [article_id]).then(({ rows }) => {
+    return rows;
+  });
+};
+
+exports.addCommentByArticleId = (article_id, username, body) => {
+  if (!username || !body) {
+    return Promise.reject({
+      status: 404,
+      msg: `Not Found`,
+    });
+  }
+
+  const queryString = `INSERT INTO comments (article_id, author, body)
+  VALUES
+  ($1, $2, $3)
+  RETURNING *`;
+
+  return db
+    .query(queryString, [article_id, username, body])
+    .then(({ rows }) => {
+      return rows[0];
+    });
 };
