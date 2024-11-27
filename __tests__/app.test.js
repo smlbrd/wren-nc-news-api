@@ -200,7 +200,28 @@ describe('GET /api/articles/:article_id', () => {
           votes: 100,
           article_img_url:
             'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+          comment_count: 11,
         });
+      });
+  });
+  test('200: Responds with an article containing comment_count property', () => {
+    return request(app)
+      .get('/api/articles/1')
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(1);
+        expect(article).toHaveProperty('comment_count');
+        expect(article.comment_count).toBe(11);
+      });
+  });
+  test('200: Responds with an article containing comment_count: 0 if no comments exist for given article_id', () => {
+    return request(app)
+      .get('/api/articles/2')
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(2);
+        expect(article).toHaveProperty('comment_count');
+        expect(article.comment_count).toBe(0);
       });
   });
   test('400: Responds with an error message if article_id is not a number', () => {
