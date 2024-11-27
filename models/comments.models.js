@@ -19,8 +19,8 @@ exports.fetchCommentsByArticleId = (article_id) => {
 exports.addCommentByArticleId = (article_id, username, body) => {
   if (!username || !body) {
     return Promise.reject({
-      status: 400,
-      msg: `Bad Request`,
+      status: 404,
+      msg: `Not Found`,
     });
   }
 

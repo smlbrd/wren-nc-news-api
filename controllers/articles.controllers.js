@@ -6,10 +6,16 @@ const {
 } = require('../models/articles.models');
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order } = req.query;
+  const { sort_by, order, topic } = req.query;
 
-  fetchArticles(sort_by, order)
-    .then((articles) => {
+  const promiseArr = [fetchArticles(sort_by, order, topic)];
+
+  if (topic) {
+    promiseArr.push(checkExists('topics', 'slug', topic));
+  }
+
+  Promise.all(promiseArr)
+    .then(([articles, _]) => {
       res.status(200).send({ articles });
     })
     .catch(next);
@@ -32,7 +38,7 @@ exports.patchArticleById = (req, res, next) => {
   checkExists('articles', 'article_id', article_id)
     .then(() => {
       return updateArticleById(article_id, inc_votes).then((article) => {
-        res.status(201).send({ article });
+        res.status(200).send({ article });
       });
     })
     .catch(next);

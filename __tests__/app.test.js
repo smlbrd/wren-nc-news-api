@@ -95,6 +95,18 @@ describe('GET /api/articles?sort_by', () => {
         expect(articles).toBeSortedBy('title', { descending: true });
       });
   });
+  test('200: Responds with an array sorted by comment_count, default descending order', () => {
+    return request(app)
+      .get('/api/articles?sort_by=comment_count')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy('comment_count', {
+          descending: true,
+          coerce: true,
+        });
+      });
+  });
   test('400: Responds with an error message if invalid sort_by query', () => {
     return request(app)
       .get('/api/articles?sort_by=mouthfeel')
@@ -130,6 +142,44 @@ describe('GET /api/articles?order', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Bad Request');
+      });
+  });
+});
+
+describe('GET /api/articles?topic', () => {
+  test('200: Responds with an array of articles matching topic query', () => {
+    return request(app)
+      .get('/api/articles?topic=mitch')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(4);
+        articles.forEach((article) => {
+          expect(article.topic).toBe('mitch');
+        });
+      });
+  });
+  test('200: Responds with an empty array if topic exists, but no articles match topic query', () => {
+    return request(app)
+      .get('/api/articles?topic=paper')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(0);
+      });
+  });
+  test('200: Responds with an array of all articles if query is omitted', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+      });
+  });
+  test("404: Responds with an error message if topic doesn't exist", () => {
+    return request(app)
+      .get('/api/articles?topic=frogs')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not Found');
       });
   });
 });
@@ -172,7 +222,7 @@ describe('GET /api/articles/:article_id', () => {
 });
 
 describe('PATCH /api/articles/:article_id', () => {
-  test('201: Responds with article including updated vote count for given article_id', () => {
+  test('200: Responds with article including updated vote count for given article_id', () => {
     const testBody = {
       inc_votes: 1,
     };
@@ -180,9 +230,24 @@ describe('PATCH /api/articles/:article_id', () => {
     return request(app)
       .patch('/api/articles/2')
       .send(testBody)
-      .expect(201)
+      .expect(200)
       .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(2);
         expect(article.votes).toBe(1);
+      });
+  });
+  test('200: Responds with article including updated vote count, value can be negative', () => {
+    const testBody = {
+      inc_votes: -100,
+    };
+
+    return request(app)
+      .patch('/api/articles/3')
+      .send(testBody)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(3);
+        expect(article.votes).toBe(-100);
       });
   });
   test('400: Responds with an error message if article_id is NaN', () => {
@@ -321,7 +386,7 @@ describe('POST /api/articles/:article_id/comments', () => {
           article_id: 1,
           author: 'butter_bridge',
           body: "when are y'all gonna start posting recipes on this site?",
-          comment_id: expect.any(Number),
+          comment_id: 19,
           created_at: expect.any(String),
           votes: 0,
         });
@@ -341,7 +406,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Bad Request');
       });
   });
-  test('400: Responds with an error message if username does not exist in users table', () => {
+  test('404: Responds with an error message if username does not exist in users table', () => {
     const testComment = {
       username: 'broth-baby',
       body: 'i like soup',
@@ -350,23 +415,23 @@ describe('POST /api/articles/:article_id/comments', () => {
     return request(app)
       .post('/api/articles/3/comments')
       .send(testComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+        expect(body.msg).toBe('Not Found');
       });
   });
-  test('400: Responds with an error message if body missing from request', () => {
+  test('404: Responds with an error message if body missing from request', () => {
     const testComment = {};
 
     return request(app)
       .post('/api/articles/5/comments')
       .send(testComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+        expect(body.msg).toBe('Not Found');
       });
   });
-  test('400: Responds with an error message if username missing from request', () => {
+  test('404: Responds with an error message if username missing from request', () => {
     const testComment = {
       body: "post this anywhere I don't mind",
     };
@@ -374,9 +439,9 @@ describe('POST /api/articles/:article_id/comments', () => {
     return request(app)
       .post('/api/articles/4/comments')
       .send(testComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+        expect(body.msg).toBe('Not Found');
       });
   });
   test("404: Responds with an error message if article_id doesn't exist", () => {

@@ -24,11 +24,14 @@ exports.postCommentByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
-  return checkExists('articles', 'article_id', article_id)
-    .then(() => {
-      return addCommentByArticleId(article_id, username, body);
-    })
-    .then((comment) => {
+  const promiseArr = [checkExists('articles', 'article_id', article_id), addCommentByArticleId(article_id, username, body)]
+  
+  if (username) {
+    promiseArr.push(checkExists('users', 'username', username));
+  }
+
+  Promise.all(promiseArr)
+    .then(([_, comment]) => {
       res.status(201).send({ comment });
     })
     .catch(next);

@@ -1,6 +1,6 @@
 const db = require('../db/connection');
 
-exports.fetchArticles = (sort_by = 'created_at', order = 'DESC') => {
+exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   const validSortBy = [
     'created_at',
     'article_id',
@@ -8,9 +8,12 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC') => {
     'topic',
     'author',
     'votes',
+    'comment_count',
   ];
 
   const validOrder = ['ASC', 'DESC'];
+
+  const queryValues = [];
 
   let queryString = `SELECT articles.article_id
   , articles.title
@@ -19,19 +22,24 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC') => {
   , articles.created_at
   , articles.votes
   , articles.article_img_url
-  , COUNT (*)::INT AS comment_count
+  , COUNT(comments.comment_id)::INT AS comment_count
   FROM articles
   JOIN comments
-  ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id`;
+  ON articles.article_id = comments.article_id`;
+
+  if (topic) {
+    queryString += ` WHERE articles.topic = $1`;
+    queryValues.push(topic);
+  }
 
   if (!validSortBy.includes(sort_by) || !validOrder.includes(order)) {
     return Promise.reject({ status: 400, msg: 'Bad Request' });
   }
 
-  queryString += ` ORDER BY ${sort_by} ${order}`;
+  queryString += ` GROUP BY articles.article_id 
+  ORDER BY ${sort_by} ${order}`;
 
-  return db.query(queryString).then(({ rows }) => {
+  return db.query(queryString, queryValues).then(({ rows }) => {
     return rows;
   });
 };
