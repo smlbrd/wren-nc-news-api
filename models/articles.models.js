@@ -32,8 +32,12 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
     queryValues.push(topic);
   }
 
-  if (!validSortBy.includes(sort_by) || !validOrder.includes(order)) {
-    return Promise.reject({ status: 400, msg: 'Bad Request' });
+  if (!validSortBy.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: 'Invalid sort parameter' });
+  }
+
+  if (!validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: 'Invalid order parameter - please choose ASC or DESC' });
   }
 
   queryString += ` GROUP BY articles.article_id 

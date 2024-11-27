@@ -111,8 +111,8 @@ describe('GET /api/articles?sort_by', () => {
     return request(app)
       .get('/api/articles?sort_by=mouthfeel')
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Invalid sort parameter');
       });
   });
 });
@@ -140,8 +140,8 @@ describe('GET /api/articles?order', () => {
     return request(app)
       .get('/api/articles?order=shuffle')
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Invalid order parameter - please choose ASC or DESC');
       });
   });
 });
@@ -178,8 +178,8 @@ describe('GET /api/articles?topic', () => {
     return request(app)
       .get('/api/articles?topic=frogs')
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Not Found');
       });
   });
 });
@@ -228,16 +228,16 @@ describe('GET /api/articles/:article_id', () => {
     return request(app)
       .get('/api/articles/soup')
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe(`Bad Request`);
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`Bad Request`);
       });
   });
   test('404: Responds with an error message if article_id does not exist', () => {
     return request(app)
       .get('/api/articles/99999')
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe(`Not Found`);
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`Not Found`);
       });
   });
 });
@@ -282,8 +282,8 @@ describe('PATCH /api/articles/:article_id', () => {
       )
       .send(testBody)
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
       });
   });
   test('400: Responds with an error message if request is empty object', () => {
@@ -293,8 +293,8 @@ describe('PATCH /api/articles/:article_id', () => {
       .patch('/api/articles/3')
       .send(testBody)
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
       });
   });
   test('400: Responds with an error message if request key is not inc_votes', () => {
@@ -306,8 +306,8 @@ describe('PATCH /api/articles/:article_id', () => {
       .patch('/api/articles/4')
       .send(testBody)
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
       });
   });
   test('400: Responds with an error message if request value is NaN', () => {
@@ -319,8 +319,8 @@ describe('PATCH /api/articles/:article_id', () => {
       .patch('/api/articles/5')
       .send(testBody)
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
       });
   });
   test("404: Responds with an error message is article_id doesn't exist", () => {
@@ -332,8 +332,8 @@ describe('PATCH /api/articles/:article_id', () => {
       .patch('/api/articles/99999')
       .send(testBody)
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Not Found');
       });
   });
 });
@@ -377,16 +377,16 @@ describe('GET /api/articles/:article_id/comments', () => {
     return request(app)
       .get('/api/articles/doctors-hate-this-one-weird-trick/comments')
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe(`Bad Request`);
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`Bad Request`);
       });
   });
   test('404: Responds with an error message if article_id does not exist', () => {
     return request(app)
       .get('/api/articles/99999/comments')
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe(`Not Found`);
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`Not Found`);
       });
   });
 });
@@ -423,8 +423,8 @@ describe('POST /api/articles/:article_id/comments', () => {
       .post('/api/articles/scrambled-egg/comments')
       .send(testComment)
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
       });
   });
   test('404: Responds with an error message if username does not exist in users table', () => {
@@ -437,8 +437,8 @@ describe('POST /api/articles/:article_id/comments', () => {
       .post('/api/articles/3/comments')
       .send(testComment)
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Not Found');
       });
   });
   test('404: Responds with an error message if body missing from request', () => {
@@ -448,8 +448,8 @@ describe('POST /api/articles/:article_id/comments', () => {
       .post('/api/articles/5/comments')
       .send(testComment)
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+      .then(({ body: { msg }}) => {
+        expect(msg).toBe('Not Found');
       });
   });
   test('404: Responds with an error message if username missing from request', () => {
@@ -461,8 +461,8 @@ describe('POST /api/articles/:article_id/comments', () => {
       .post('/api/articles/4/comments')
       .send(testComment)
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Not Found');
       });
   });
   test("404: Responds with an error message if article_id doesn't exist", () => {
@@ -475,8 +475,8 @@ describe('POST /api/articles/:article_id/comments', () => {
       .post('/api/articles/99999/comments')
       .send(testComment)
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Not Found');
       });
   });
 });
@@ -489,16 +489,16 @@ describe('DELETE /api/comments/comment_id', () => {
     return request(app)
       .delete('/api/comments/begone-comments')
       .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
       });
   });
   test("404: Responds with an error message if comment_id doesn't exist", () => {
     return request(app)
       .delete('/api/comments/99999')
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Not Found');
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Not Found');
       });
   });
 });
@@ -526,8 +526,8 @@ describe('404: Non-existent route query', () => {
     return request(app)
       .get('/api/grandma_s_perfect_autumn_strudel_recipe')
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe(`Not Found`);
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`Not Found`);
       });
   });
 });
