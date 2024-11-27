@@ -95,6 +95,18 @@ describe('GET /api/articles?sort_by', () => {
         expect(articles).toBeSortedBy('title', { descending: true });
       });
   });
+  test('200: Responds with an array sorted by comment_count, default descending order', () => {
+    return request(app)
+      .get('/api/articles?sort_by=comment_count')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy('comment_count', {
+          descending: true,
+          coerce: true,
+        });
+      });
+  });
   test('400: Responds with an error message if invalid sort_by query', () => {
     return request(app)
       .get('/api/articles?sort_by=mouthfeel')
@@ -140,7 +152,6 @@ describe('GET /api/articles?topic', () => {
       .get('/api/articles?topic=mitch')
       .expect(200)
       .then(({ body: { articles } }) => {
-        console.log(articles)
         expect(articles.length).toBe(4);
         articles.forEach((article) => {
           expect(article.topic).toBe('mitch');
@@ -204,7 +215,19 @@ describe('PATCH /api/articles/:article_id', () => {
         expect(article.votes).toBe(1);
       });
   });
-  // TODO: 201 votes value can be negative!!
+  test('201: Responds with article including updated vote count, value can be negative', () => {
+    const testBody = {
+      inc_votes: -100,
+    };
+
+    return request(app)
+      .patch('/api/articles/2')
+      .send(testBody)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article.votes).toBe(-100);
+      });
+  });
   test('400: Responds with an error message if article_id is NaN', () => {
     const testBody = {
       inc_votes: 2,
