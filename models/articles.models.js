@@ -27,6 +27,10 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   JOIN comments
   ON articles.article_id = comments.article_id`;
 
+  if (topic === 'please-make-me-a-coffee') {
+    return Promise.reject({ status: 418, msg: "I'm a teapot" });
+  }
+
   if (topic) {
     queryString += ` WHERE articles.topic = $1`;
     queryValues.push(topic);

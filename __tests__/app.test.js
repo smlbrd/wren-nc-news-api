@@ -182,7 +182,19 @@ describe('GET /api/articles?topic', () => {
         expect(msg).toBe('Not Found');
       });
   });
+  test("418: Responds with an error message if the topic is 'please-make-me-a-coffee'", () => {
+    return request(app)
+      .get('/api/articles?topic=please-make-me-a-coffee')
+      .expect(418)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("I'm a teapot");
+      });
+  });
 });
+
+describe('POST /api/articles', () => {});
+// 201 new article created
+//
 
 describe('GET /api/articles/:article_id', () => {
   test('200: Responds with the article linked to :article_id', () => {
