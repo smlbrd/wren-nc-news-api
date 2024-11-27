@@ -7,6 +7,7 @@
   - [Prerequsites](#prerequisites)
   - [Cloning this repository](#cloning)
   - [Installing dependencies](#dependencies)
+- [Database Management](#database-management)
   - [Database setup](#database-setup)
   - [Database seeding](#database-seeding)
 - [Special Thanks](#special-thanks)
@@ -60,6 +61,7 @@ To run this API, we'll need to install some dependencies using the following ter
 ```bash
 npm install
 ```
+## Database Management <a name = "database-management"></a>
 
 ### Database setup <a name = "database-setup"></a>
 
@@ -81,6 +83,16 @@ Now we have our databases set up, we can seed them with the following command:
 ```bash
 npm run setup-dbs
 ```
+
+## Testing <a name = "testing"></a>
+
+The test suite for this project can be run with the following command:
+
+```bash
+npm test app
+```
+
+If you'd like to expand on this project and add your own tests, all the dependencies used for this project are listed below.
 
 That's it - you're good to go! Have fun, and thanks for taking a look at my work! 🎉🚀
 
