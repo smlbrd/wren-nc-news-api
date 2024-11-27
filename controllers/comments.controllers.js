@@ -8,7 +8,7 @@ exports.patchCommentById = (req, res, next) => {
   const { comment_id } = req.params;
   const { inc_votes } = req.body;
 
-  checkExists('comments', 'comment_id', comment_id)
+  return checkExists('comments', 'comment_id', comment_id)
     .then(() => {
       return updateCommentById(comment_id, inc_votes).then((comment) => {
         res.status(200).send({ comment });

@@ -502,19 +502,18 @@ describe('DELETE /api/comments/comment_id', () => {
       });
   });
   test('404: Responds with an error message if attempting to fetch deleted comment_id', () => {
-    return db.query('DELETE FROM comments WHERE comment_id = 2;')
-      .then(() => {
-        return request(app)
-          .get('/api/comments/2')
-          .expect(404)
-          .then(({ body: { msg } }) => {
-            expect(msg).toBe('Not Found');
-          });
-      })
-  })
+    return db.query('DELETE FROM comments WHERE comment_id = 2;').then(() => {
+      return request(app)
+        .get('/api/comments/2')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe('Not Found');
+        });
+    });
+  });
 });
 
-describe.only('PATCH /api/comments/:comment_id', () => {
+describe('PATCH /api/comments/:comment_id', () => {
   test('200: Responds with comment including updated vote property for given comment_id', () => {
     const testBody = { inc_votes: 1 };
 
@@ -551,13 +550,62 @@ describe.only('PATCH /api/comments/:comment_id', () => {
         });
       });
   });
-  // test('400: Responds with an error message if comment_id is NaN', () => {});
-  // test('400: Responds with an error message if request body is empty object', () => {});
-  // test('400: Responds with an error message if request key is not inc_votes', () => {});
-  // test('400: Responds with an error message if request value is NaN', () => {});
-  // test("404: Responds with an error message if comment_id doesn't exist", () => {});
-});
+  test('400: Responds with an error message if comment_id is NaN', () => {
+    const testBody = { inc_votes: 5 };
 
+    return request(app)
+      .patch('/api/comments/brb-upvoting-my-own-posts')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if request body is empty object', () => {
+    const testBody = {};
+
+    return request(app)
+      .patch('/api/comments/4')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if request key is not inc_votes', () => {
+    const testBody = { change_votes_by_this_number: 5 };
+
+    return request(app)
+      .patch('/api/comments/5')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if request value is NaN', () => {
+    const testBody = { inc_votes: 'one-hundred-votes' };
+
+    return request(app)
+      .patch('/api/comments/6')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test("404: Responds with an error message if comment_id doesn't exist", () => {
+    const testBody = { inc_votes: 10 };
+
+    return request(app)
+      .patch('/api/comments/99999')
+      .send(testBody)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Not Found');
+      });
+  });
+});
 
 describe('GET /api/users', () => {
   test('200: Responds with an array of users containing correct properties', () => {
