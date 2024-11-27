@@ -158,19 +158,31 @@ describe('GET /api/articles?topic', () => {
         });
       });
   });
-  test('200: Responds with an array of all articles if no matches found for topic query', () => {
+  test('200: Responds with an empty array if topic exists, but no articles match topic query', () => {
     return request(app)
-      .get('/api/articles?topic=frogs')
+      .get('/api/articles?topic=paper')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(0);
+      });
+  });
+  test('200: Responds with an array of all articles if query is omitted', () => {
+    return request(app)
+      .get('/api/articles')
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles.length).toBe(5);
       });
   });
+  test("404: Responds with an error message if topic doesn't exist", () => {
+    return request(app)
+      .get('/api/articles?topic=frogs')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not Found');
+      });
+  });
 });
-
-// 200 responds with all articles if input omitted / topic exists, no match
-// 400 topic is invalid
-// 404 topic does not exist
 
 describe('GET /api/articles/:article_id', () => {
   test('200: Responds with the article linked to :article_id', () => {
@@ -394,7 +406,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Bad Request');
       });
   });
-  test.skip('404: Responds with an error message if username does not exist in users table', () => {
+  test('404: Responds with an error message if username does not exist in users table', () => {
     const testComment = {
       username: 'broth-baby',
       body: 'i like soup',
@@ -405,7 +417,7 @@ describe('POST /api/articles/:article_id/comments', () => {
       .send(testComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+        expect(body.msg).toBe('Not Found');
       });
   });
   test('404: Responds with an error message if body missing from request', () => {
