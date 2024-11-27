@@ -501,7 +501,63 @@ describe('DELETE /api/comments/comment_id', () => {
         expect(msg).toBe('Not Found');
       });
   });
+  test('404: Responds with an error message if attempting to fetch deleted comment_id', () => {
+    return db.query('DELETE FROM comments WHERE comment_id = 2;')
+      .then(() => {
+        return request(app)
+          .get('/api/comments/2')
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe('Not Found');
+          });
+      })
+  })
 });
+
+describe.only('PATCH /api/comments/:comment_id', () => {
+  test('200: Responds with comment including updated vote property for given comment_id', () => {
+    const testBody = { inc_votes: 1 };
+
+    return request(app)
+      .patch('/api/comments/1')
+      .send(testBody)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          article_id: 9,
+          author: 'butter_bridge',
+          votes: 17,
+          created_at: '2020-04-06T12:17:00.000Z',
+        });
+      });
+  });
+  test('200: Responds with comment including updated vote count, value can be negative', () => {
+    const testBody = { inc_votes: -100 };
+
+    return request(app)
+      .patch('/api/comments/2')
+      .send(testBody)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual({
+          article_id: 1,
+          author: 'butter_bridge',
+          body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+          comment_id: 2,
+          created_at: '2020-10-31T03:03:00.000Z',
+          votes: -86,
+        });
+      });
+  });
+  // test('400: Responds with an error message if comment_id is NaN', () => {});
+  // test('400: Responds with an error message if request body is empty object', () => {});
+  // test('400: Responds with an error message if request key is not inc_votes', () => {});
+  // test('400: Responds with an error message if request value is NaN', () => {});
+  // test("404: Responds with an error message if comment_id doesn't exist", () => {});
+});
+
 
 describe('GET /api/users', () => {
   test('200: Responds with an array of users containing correct properties', () => {
