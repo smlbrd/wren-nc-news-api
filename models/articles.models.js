@@ -24,7 +24,7 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   , articles.article_img_url
   , COUNT(comments.comment_id)::INT AS comment_count
   FROM articles
-  JOIN comments
+  LEFT JOIN comments
   ON articles.article_id = comments.article_id`;
 
   if (topic) {
