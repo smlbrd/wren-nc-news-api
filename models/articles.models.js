@@ -54,6 +54,7 @@ exports.fetchArticles = (
 
   const validateLimit = Number(limit);
   const validatePage = Number(p);
+  const offset = (p - 1) * limit;
 
   if (isNaN(validateLimit) || isNaN(validatePage)) {
     return Promise.reject({ status: 400, msg: 'Bad Request' });
@@ -61,7 +62,6 @@ exports.fetchArticles = (
 
   queryString += ` LIMIT ${limit}`;
 
-  const offset = (p - 1) * limit;
   queryString += ` OFFSET ${offset}`;
 
   return db.query(queryString, queryValues).then(({ rows }) => {
@@ -162,8 +162,8 @@ exports.updateArticleById = (article_id, inc_votes) => {
   });
 };
 
-exports.fetchCommentsByArticleId = (article_id) => {
-  const queryString = `SELECT comment_id
+exports.fetchCommentsByArticleId = (article_id, limit = 10, p = 1) => {
+  let queryString = `SELECT comment_id
     , votes
     , created_at
     , author
@@ -172,6 +172,18 @@ exports.fetchCommentsByArticleId = (article_id) => {
     FROM comments
     WHERE article_id = $1
     ORDER BY created_at DESC`;
+
+  const validateLimit = Number(limit);
+  const validatePage = Number(p);
+  const offset = (p - 1) * limit;
+
+  if (isNaN(validateLimit) || isNaN(validatePage)) {
+    return Promise.reject({ status: 400, msg: 'Bad Request' });
+  }
+
+  queryString += ` LIMIT ${limit}`;
+
+  queryString += ` OFFSET ${offset}`;
 
   return db.query(queryString, [article_id]).then(({ rows }) => {
     return rows;

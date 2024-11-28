@@ -205,6 +205,17 @@ describe('GET /api/articles?limit', () => {
         expect(articleCount.total_count).toBe(12);
       });
   });
+  test('400: Responds with an error message if limit value is NaN', () => {
+    return request(app)
+      .get('/api/articles?limit=break')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+});
+
+describe('GET /api/articles?p', () => {
   test('200: Response displays dynamic range of results based on page value', () => {
     return request(app)
       .get('/api/articles?limit=5&topic=mitch&p=1')
@@ -247,14 +258,6 @@ describe('GET /api/articles?limit', () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles.length).toBe(0);
-      });
-  });
-  test('400: Responds with an error message if limit value is NaN', () => {
-    return request(app)
-      .get('/api/articles?limit=break')
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe('Bad Request');
       });
   });
   test('400: Responds with an error message if p value is NaN', () => {
@@ -575,6 +578,73 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(msg).toBe(`Not Found`);
       });
   });
+});
+
+describe('GET /api/articles/:article_id/comments?limit', () => {
+  test('200: Responds with an array of comments linked to input article_id, default 10', () => {
+    return request(app)
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(10);
+      });
+  });
+});
+test('200: Responds with an array of comments based on a custom limit query', () => {
+  return request(app)
+    .get('/api/articles/1/comments?limit=5')
+    .expect(200)
+    .then(({ body: { comments } }) => {
+      expect(comments.length).toBe(5);
+    });
+});
+test('400: Responds with an error message if limit value is NaN', () => {
+  return request(app)
+    .get('/api/articles/1/comments?limit=reached')
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe(`Bad Request`);
+    });
+});
+
+describe('GET /api/articles/:article_id/comments?p', () => {
+  test('200: Response displays dynamic range of results based on page value', () => {
+    return request(app)
+      .get('/api/articles/1/comments?limit=5&p=1')
+      .expect(200)
+      .then(({ body: { comments }}) => {
+        expect(comments.length).toBe(5);
+        expect(comments[0].comment_id).toBe(5);
+        expect(comments[4].comment_id).toBe(7);
+      })
+  })
+});
+test('200: Response increments dynamically based on page value', () => {
+  return request(app)
+      .get('/api/articles/1/comments?limit=5&p=2')
+      .expect(200)
+      .then(({ body: { comments }}) => {
+        expect(comments.length).toBe(5);
+        expect(comments[0].comment_id).toBe(8);
+        expect(comments[4].comment_id).toBe(4);
+      })
+});
+test('200: Response returns a limited array on final page of results', () => {
+  return request(app)
+      .get('/api/articles/1/comments?limit=5&p=3')
+      .expect(200)
+      .then(({ body: { comments }}) => {
+        expect(comments.length).toBe(1);
+        expect(comments[0].comment_id).toBe(9);
+      })
+})
+test('400: Responds with an error message if p value is NaN', () => {
+  return request(app)
+    .get('/api/articles/1/comments?p=terodactyl')
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe(`Bad Request`);
+    });
 });
 
 describe('POST /api/articles/:article_id/comments', () => {
