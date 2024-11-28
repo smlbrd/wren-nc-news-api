@@ -1,6 +1,6 @@
 # Northcoders News API
 
-## 📝 Table of Contents
+## 📖 Table of Contents
 
 - [About](#about)
 - [Getting Started](#getting-started)
@@ -12,19 +12,21 @@
   - [Database seeding](#database-seeding)
 - [Special Thanks](#special-thanks)
 
-## 🧐 About <a name = "about"></a>
+## 🦇 About <a name = "about"></a>
 
 This REST API has been built to access application data programmatically.
 
 The intention is to mimic the construction of a real-world backend service (such as Reddit), which should provide information to frontend architecture.
 
-This project was built by [Wren Hawthorne](https://github.com/smlbrd) as part of the [Northcoders](https://northcoders.com/) JavaScript Software Development bootcamp.
-
 A hosted version of this project is [available online here](https://wren-nc-news.onrender.com/api). Please be patient, as it can take a minute or two to spin up for the first time!
 
-Clicking the link above will take you to a directory describing the endpoints accepted by the API, along with examples of accepted queries and typical responses.
+=======
 
-Please note: Your browser may require an extension to format the JSON file to be a little easier to read. For Chrome users, [this one](https://chromewebstore.google.com/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa?hl=en&pli=1) comes highly recommended!
+
+Clicking the link above will take you to a directory describing the endpoints accepted by the API, along with examples of accepted queries and typical responses.
+**Please be patient, as it can take a minute or two to spin up for the first time!**
+
+_Please note: Your browser may require an extension to format the JSON file to be a little easier to read. For Chrome users, [this one](https://chromewebstore.google.com/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa?hl=en&pli=1) comes highly recommended!_
 
 ## 🚀 Getting Started <a name = "getting-started"></a>
 
@@ -48,15 +50,6 @@ Open your terminal, navigate to the directory where you'd like to copy this repo
 ```bash
 git clone https://github.com/smlbrd/wren-nc-news.git
 ```
-
-From here, you can create a new (empty!) repository on GitHub, link it to your clone and push it to your new repo:
-
-```bash
-git remote set-url origin <YOUR-REPO-URL>
-git push -u origin main
-```
-
-Now you should be all set to push any changes you make to your GitHub!
 
 ### ⛓️ Installing dependencies <a name = "dependencies"></a>
 
@@ -119,4 +112,4 @@ This project gratefully depends on the work of:
 
 ---
 
-This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
+This portfolio project was built by [Wren Hawthorne](https://github.com/smlbrd) as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
