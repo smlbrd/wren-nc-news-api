@@ -18,7 +18,10 @@ This REST API has been built to access application data programmatically.
 
 The intention is to mimic the construction of a real-world backend service (such as Reddit), which should provide information to frontend architecture.
 
-A hosted version of this project is [available online here](https://wren-nc-news.onrender.com/api). 
+A hosted version of this project is [available online here](https://wren-nc-news.onrender.com/api). Please be patient, as it can take a minute or two to spin up for the first time!
+
+=======
+
 
 Clicking the link above will take you to a directory describing the endpoints accepted by the API, along with examples of accepted queries and typical responses.
 **Please be patient, as it can take a minute or two to spin up for the first time!**
