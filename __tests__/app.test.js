@@ -205,6 +205,17 @@ describe('GET /api/articles?limit', () => {
         expect(articleCount.total_count).toBe(12);
       });
   });
+  test('400: Responds with an error message if limit value is NaN', () => {
+    return request(app)
+      .get('/api/articles?limit=break')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+});
+
+describe('GET /api/articles?p', () => {
   test('200: Response displays dynamic range of results based on page value', () => {
     return request(app)
       .get('/api/articles?limit=5&topic=mitch&p=1')
@@ -247,14 +258,6 @@ describe('GET /api/articles?limit', () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles.length).toBe(0);
-      });
-  });
-  test('400: Responds with an error message if limit value is NaN', () => {
-    return request(app)
-      .get('/api/articles?limit=break')
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe('Bad Request');
       });
   });
   test('400: Responds with an error message if p value is NaN', () => {
@@ -576,6 +579,10 @@ describe('GET /api/articles/:article_id/comments', () => {
       });
   });
 });
+
+describe('GET /api/articles/:article_id/comments?limit', () => {});
+
+describe('GET /api/articles/:article_id/comments?limit', () => {});
 
 describe('POST /api/articles/:article_id/comments', () => {
   test('201: Responds with a new comment created at a given article_id', () => {
