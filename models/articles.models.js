@@ -51,6 +51,33 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   });
 };
 
+exports.addArticle = (
+  author,
+  title,
+  body,
+  topic,
+  article_img_url = 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+) => {
+  if (!author || !title || !body || !topic) {
+    return Promise.reject({
+      status: 400,
+      msg: `Bad Request`,
+    });
+  }
+
+  const queryValues = [author, title, body, topic, article_img_url];
+
+  const queryString = `INSERT INTO articles (author, title, body, topic, article_img_url)
+  VALUES ($1, $2, $3, $4, $5)
+  RETURNING *`;
+
+  return db
+    .query(queryString, queryValues)
+    .then(({ rows: [{ article_id }] }) => {
+      return article_id;
+    });
+};
+
 exports.fetchArticleById = (article_id) => {
   const queryString = `SELECT articles.article_id
   , articles.title

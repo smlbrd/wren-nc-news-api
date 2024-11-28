@@ -1,6 +1,7 @@
 const { checkExists } = require('../db/seeds/utils');
 const {
   fetchArticles,
+  addArticle,
   fetchArticleById,
   updateArticleById,
   fetchCommentsByArticleId,
@@ -19,6 +20,18 @@ exports.getArticles = (req, res, next) => {
   Promise.all(promiseArr)
     .then(([articles, _]) => {
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  const { author, title, body, topic, article_img_url } = req.body;
+
+  addArticle(author, title, body, topic, article_img_url)
+    .then((article_id) => {
+      return fetchArticleById(article_id).then((article) => {
+        res.status(201).send({ article });
+      });
     })
     .catch(next);
 };

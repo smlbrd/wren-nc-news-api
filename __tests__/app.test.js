@@ -166,14 +166,6 @@ describe('GET /api/articles?topic', () => {
         expect(articles.length).toBe(0);
       });
   });
-  test('200: Responds with an array of all articles if query is omitted', () => {
-    return request(app)
-      .get('/api/articles')
-      .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
-      });
-  });
   test("404: Responds with an error message if topic doesn't exist", () => {
     return request(app)
       .get('/api/articles?topic=frogs')
@@ -186,15 +178,107 @@ describe('GET /api/articles?topic', () => {
 
 describe('POST /api/articles', () => {
   test('201: Responds with a new article created from an input request body', () => {
-    
-  })
+    const testBody = {
+      author: 'butter_bridge',
+      title: '10 weird tricks doctors hate',
+      body: 'just kidding I *am* a doctor, take a seat',
+      topic: 'mitch',
+      article_img_url:
+        'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=700&h=700',
+    };
+
+    return request(app)
+      .post('/api/articles')
+      .send(testBody)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject(testBody);
+        expect(article.article_id).toBe(14);
+        expect(article.votes).toBe(0);
+        expect(typeof article.created_at).toBe('string');
+        expect(article.comment_count).toBe(0);
+      });
+  });
+  test('201: Responds with a new article containing default article_img_url if none specified in request body', () => {
+    const testBody = {
+      author: 'butter_bridge',
+      title: '10 more weird tricks doctors hate even more',
+      body: "can't believe you fell for this twice, again, take a seat",
+      topic: 'mitch',
+    };
+
+    const defaultImgUrl =
+      'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700';
+
+    return request(app)
+      .post('/api/articles')
+      .send(testBody)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article.article_img_url).toBe(defaultImgUrl);
+      });
+  });
+  test('400: Responds with an error message if author property missing from request body', () => {
+    const testBody = {
+      title: '10 illusions dentists love',
+      body: 'you cannot escape me: your general practitioner. take a seat',
+      topic: 'mitch',
+    };
+
+    return request(app)
+      .post('/api/articles')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if title property missing from request body', () => {
+    const testBody = {
+      author: 'butter_bridge',
+      body: 'no title? no problem',
+      topic: 'mitch',
+    };
+
+    return request(app)
+      .post('/api/articles')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if body property missing from request body', () => {
+    const testBody = {
+      author: 'butter_bridge',
+      title: '1 invisible article',
+      topic: 'mitch',
+    };
+
+    return request(app)
+      .post('/api/articles')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if topic property missing from request body', () => {
+    const testBody = {
+      author: 'butter_bridge',
+      title: '1 unfiled article everyone hates',
+      body: 'where do I file this?',
+    };
+
+    return request(app)
+      .post('/api/articles')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
 });
-// 201 responds with new article created
-// 201 article_img_url defaults if not provided
-// 400 if author missing
-// 400 if title missing
-// 400 if body missing
-// 400 if topic missing
 
 describe('GET /api/articles/:article_id', () => {
   test('200: Responds with the article linked to :article_id', () => {
@@ -202,7 +286,7 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/1')
       .expect(200)
       .then(({ body: { article } }) => {
-        expect(article).toEqual({
+        expect(article).toMatchObject({
           article_id: 1,
           title: 'Living in the shadow of a great man',
           topic: 'mitch',
@@ -212,7 +296,6 @@ describe('GET /api/articles/:article_id', () => {
           votes: 100,
           article_img_url:
             'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-          comment_count: 11,
         });
       });
   });

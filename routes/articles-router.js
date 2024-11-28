@@ -2,6 +2,7 @@ const articlesRouter = require('express').Router();
 
 const {
   getArticles,
+  postArticle,
   getArticleById,
   patchArticleById,
   getCommentsByArticleId,
@@ -10,7 +11,8 @@ const {
 
 articlesRouter
   .route('/')
-  .get(getArticles);
+  .get(getArticles)
+  .post(postArticle);
 
 articlesRouter
   .route('/:article_id')
