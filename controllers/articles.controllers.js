@@ -6,20 +6,21 @@ const {
   updateArticleById,
   fetchCommentsByArticleId,
   addCommentByArticleId,
+  countArticles,
 } = require('../models/articles.models');
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, topic } = req.query;
+  const { sort_by, order, topic, limit } = req.query;
 
-  const promiseArr = [fetchArticles(sort_by, order, topic)];
+  const promiseArr = [fetchArticles(sort_by, order, topic, limit), countArticles()];
 
   if (topic) {
     promiseArr.push(checkExists('topics', 'slug', topic));
   }
 
   Promise.all(promiseArr)
-    .then(([articles, _]) => {
-      res.status(200).send({ articles });
+    .then(([articles, articleCount, _]) => {
+      res.status(200).send({ articles, articleCount });
     })
     .catch(next);
 };
@@ -27,7 +28,7 @@ exports.getArticles = (req, res, next) => {
 exports.postArticle = (req, res, next) => {
   const { author, title, body, topic, article_img_url } = req.body;
 
-  addArticle(author, title, body, topic, article_img_url)
+  return addArticle(author, title, body, topic, article_img_url)
     .then((article_id) => {
       return fetchArticleById(article_id).then((article) => {
         res.status(201).send({ article });

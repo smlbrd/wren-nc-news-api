@@ -152,6 +152,7 @@
       }
     ]
   },
+  "GET /api/articles?limit": {},
   "POST /api/articles": {
     "description": "creates a new article based on request body",
     "queries": [],

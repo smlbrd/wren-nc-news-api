@@ -1,6 +1,12 @@
 const db = require('../db/connection');
+const format = require('pg-format');
 
-exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
+exports.fetchArticles = (
+  sort_by = 'created_at',
+  order = 'DESC',
+  topic,
+  limit = 10
+) => {
   const validSortBy = [
     'created_at',
     'article_id',
@@ -46,9 +52,19 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   queryString += ` GROUP BY articles.article_id 
   ORDER BY ${sort_by} ${order}`;
 
+  queryString += ` LIMIT ${limit}`;
+
   return db.query(queryString, queryValues).then(({ rows }) => {
     return rows;
   });
+};
+
+exports.countArticles = () => {
+  return db
+    .query(`SELECT COUNT(article_id)::INT AS total_count FROM articles`)
+    .then(({ rows }) => {
+      return rows[0];
+    });
 };
 
 exports.addArticle = (
