@@ -580,9 +580,37 @@ describe('GET /api/articles/:article_id/comments', () => {
   });
 });
 
-describe('GET /api/articles/:article_id/comments?limit', () => {});
+describe('GET /api/articles/:article_id/comments?limit', () => {
+  test('200: Responds with an array of comments linked to input article_id, default 10', () => {
+    return request(app)
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(10);
+      });
+  });
+});
+test('200: Responds with an array of comments based on a custom limit query', () => {
+  return request(app)
+    .get('/api/articles/1/comments?limit=5')
+    .expect(200)
+    .then(({ body: { comments } }) => {
+      expect(comments.length).toBe(5);
+    });
+});
+test('400: Responds with an error message if limit value is NaN', () => {
+  return request(app)
+    .get('/api/articles/1/comments?limit=reached')
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe(`Bad Request`);
+    });
+});
 
-describe('GET /api/articles/:article_id/comments?limit', () => {});
+describe('GET /api/articles/:article_id/comments?p', () => {});
+//200 response includes a dynamic array based on p value, default 1
+//200 response accepts a custom p query
+//400 p value is NaN
 
 describe('POST /api/articles/:article_id/comments', () => {
   test('201: Responds with a new comment created at a given article_id', () => {

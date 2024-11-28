@@ -162,8 +162,8 @@ exports.updateArticleById = (article_id, inc_votes) => {
   });
 };
 
-exports.fetchCommentsByArticleId = (article_id) => {
-  const queryString = `SELECT comment_id
+exports.fetchCommentsByArticleId = (article_id, limit = 10) => {
+  let queryString = `SELECT comment_id
     , votes
     , created_at
     , author
@@ -172,6 +172,14 @@ exports.fetchCommentsByArticleId = (article_id) => {
     FROM comments
     WHERE article_id = $1
     ORDER BY created_at DESC`;
+
+  const validateLimit = Number(limit);
+
+  if (isNaN(validateLimit)) {
+    return Promise.reject({ status: 400, msg: 'Bad Request' });
+  }
+
+  queryString += ` LIMIT ${limit}`;
 
   return db.query(queryString, [article_id]).then(({ rows }) => {
     return rows;
