@@ -48,15 +48,6 @@ Open your terminal, navigate to the directory where you'd like to copy this repo
 git clone https://github.com/smlbrd/wren-nc-news.git
 ```
 
-From here, you can create a new (empty!) repository on GitHub, link it to your clone and push it to your new repo:
-
-```bash
-git remote set-url origin <YOUR-REPO-URL>
-git push -u origin main
-```
-
-Now you should be all set to push any changes you make to your GitHub!
-
 ### ⛓️ Installing dependencies <a name = "dependencies"></a>
 
 To run this API, we'll need to install some dependencies using the following terminal command:
