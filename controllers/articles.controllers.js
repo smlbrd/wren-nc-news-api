@@ -52,9 +52,9 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  const { limit } = req.query;
+  const { limit, p } = req.query;
 
-  const promiseArr = [fetchCommentsByArticleId(article_id, limit)];
+  const promiseArr = [fetchCommentsByArticleId(article_id, limit, p)];
 
   if (article_id) {
     promiseArr.push(checkExists('articles', 'article_id', article_id));
