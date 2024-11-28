@@ -8,7 +8,9 @@ const {
   postCommentByArticleId,
 } = require('../controllers/articles.controllers');
 
-articlesRouter.get('/', getArticles);
+articlesRouter
+  .route('/')
+  .get(getArticles);
 
 articlesRouter
   .route('/:article_id')

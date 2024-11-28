@@ -152,6 +152,7 @@
       }
     ]
   },
+  "POST /api/articles": {},
   "GET /api/articles/:article_id": {
     "description": "serves a specific article based on article_id",
     "queries": [],

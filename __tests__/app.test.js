@@ -182,19 +182,19 @@ describe('GET /api/articles?topic', () => {
         expect(msg).toBe('Not Found');
       });
   });
-  test("418: Responds with an error message if the topic is 'please-make-me-a-coffee'", () => {
-    return request(app)
-      .get('/api/articles?topic=please-make-me-a-coffee')
-      .expect(418)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("I'm a teapot");
-      });
-  });
 });
 
-describe('POST /api/articles', () => {});
-// 201 new article created
-//
+describe('POST /api/articles', () => {
+  test('201: Responds with a new article created from an input request body', () => {
+    
+  })
+});
+// 201 responds with new article created
+// 201 article_img_url defaults if not provided
+// 400 if author missing
+// 400 if title missing
+// 400 if body missing
+// 400 if topic missing
 
 describe('GET /api/articles/:article_id', () => {
   test('200: Responds with the article linked to :article_id', () => {
@@ -439,6 +439,30 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(msg).toBe('Bad Request');
       });
   });
+  test('400: Responds with an error message if body missing from request', () => {
+    const testComment = {};
+
+    return request(app)
+      .post('/api/articles/5/comments')
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if username missing from request', () => {
+    const testComment = {
+      body: "post this anywhere I don't mind",
+    };
+
+    return request(app)
+      .post('/api/articles/4/comments')
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
   test('404: Responds with an error message if username does not exist in users table', () => {
     const testComment = {
       username: 'broth-baby',
@@ -447,30 +471,6 @@ describe('POST /api/articles/:article_id/comments', () => {
 
     return request(app)
       .post('/api/articles/3/comments')
-      .send(testComment)
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe('Not Found');
-      });
-  });
-  test('404: Responds with an error message if body missing from request', () => {
-    const testComment = {};
-
-    return request(app)
-      .post('/api/articles/5/comments')
-      .send(testComment)
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe('Not Found');
-      });
-  });
-  test('404: Responds with an error message if username missing from request', () => {
-    const testComment = {
-      body: "post this anywhere I don't mind",
-    };
-
-    return request(app)
-      .post('/api/articles/4/comments')
       .send(testComment)
       .expect(404)
       .then(({ body: { msg } }) => {

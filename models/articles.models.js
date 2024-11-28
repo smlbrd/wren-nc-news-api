@@ -27,10 +27,6 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   JOIN comments
   ON articles.article_id = comments.article_id`;
 
-  if (topic === 'please-make-me-a-coffee') {
-    return Promise.reject({ status: 418, msg: "I'm a teapot" });
-  }
-
   if (topic) {
     queryString += ` WHERE articles.topic = $1`;
     queryValues.push(topic);
@@ -119,8 +115,8 @@ exports.fetchCommentsByArticleId = (article_id) => {
 exports.addCommentByArticleId = (article_id, username, body) => {
   if (!username || !body) {
     return Promise.reject({
-      status: 404,
-      msg: `Not Found`,
+      status: 400,
+      msg: `Bad Request`,
     });
   }
 
