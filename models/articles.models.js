@@ -1,6 +1,12 @@
 const db = require('../db/connection');
 
-exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
+exports.fetchArticles = (
+  sort_by = 'created_at',
+  order = 'DESC',
+  topic,
+  limit = 10,
+  p = 1
+) => {
   const validSortBy = [
     'created_at',
     'article_id',
@@ -24,7 +30,7 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   , articles.article_img_url
   , COUNT(comments.comment_id)::INT AS comment_count
   FROM articles
-  JOIN comments
+  LEFT JOIN comments
   ON articles.article_id = comments.article_id`;
 
   if (topic) {
@@ -46,8 +52,41 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   queryString += ` GROUP BY articles.article_id 
   ORDER BY ${sort_by} ${order}`;
 
+  const validateLimit = Number(limit);
+  const validatePage = Number(p);
+
+  if (isNaN(validateLimit) || isNaN(validatePage)) {
+    return Promise.reject({ status: 400, msg: 'Bad Request' });
+  }
+
+  queryString += ` LIMIT ${limit}`;
+
+  const offset = (p - 1) * limit;
+  queryString += ` OFFSET ${offset}`;
+
   return db.query(queryString, queryValues).then(({ rows }) => {
     return rows;
+  });
+};
+
+exports.countArticles = (topic, limit = 10, p = 1) => {
+  let countString = `SELECT COUNT(DISTINCT article_id)::INT AS total_count FROM articles`;
+
+  const countValues = [];
+
+  if (topic) {
+    countString += ` WHERE articles.topic = $1`;
+    countValues.push(topic);
+  }
+
+  return db.query(countString, countValues).then(({ rows }) => {
+    const totalArticles = rows[0].total_count;
+    const totalPages = Math.ceil(totalArticles / limit);
+
+    if (totalPages > 0 && totalPages < p) {
+      return [];
+    }
+    return rows[0];
   });
 };
 

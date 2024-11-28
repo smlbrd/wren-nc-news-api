@@ -10,8 +10,8 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles, sorted by date created in descending order",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles, defaults to sorting by created_at date in descending order",
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {
@@ -149,6 +149,88 @@
         "votes": 0,
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         "comment_count": 2
+      }
+    ]
+  },
+  "GET /api/articles?limit": {
+    "description": "serves an array of articles, limited by query value, default 10",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "article_id": 3,
+        "title": "Eight pug gifs that remind me of mitch",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "created_at": "2020-11-03T09:12:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 2
+      },
+      {
+        "article_id": 6,
+        "title": "A",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "created_at": "2020-10-18T01:00:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 1
+      },
+      {
+        "article_id": 2,
+        "title": "Sony Vaio; or, The Laptop",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "created_at": "2020-10-16T05:03:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 0
+      },
+      {
+        "article_id": 12,
+        "title": "Moustache",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "created_at": "2020-10-11T11:24:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 0
+      },
+      {
+        "article_id": 13,
+        "title": "Another article about Mitch",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "created_at": "2020-10-11T11:24:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 0
+      }
+    ]
+  },
+  "GET /api/articles?p": {
+    "description": "serves an array of paginated articles based on p value, default 1",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "article_id": 11,
+        "title": "Am I a cat?",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "created_at": "2020-01-15T22:21:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 0
+      },
+      {
+        "article_id": 7,
+        "title": "Z",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "created_at": "2020-01-07T14:08:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 0
       }
     ]
   },

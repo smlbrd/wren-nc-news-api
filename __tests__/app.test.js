@@ -47,7 +47,7 @@ describe('GET /api/articles', () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(10);
         articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
@@ -68,7 +68,7 @@ describe('GET /api/articles', () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toBeSortedBy('created_at', { descending: true });
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(10);
         articles.forEach((article) => {
           expect(article).not.toHaveProperty('body');
         });
@@ -82,7 +82,7 @@ describe('GET /api/articles?sort_by', () => {
       .get('/api/articles?sort_by=article_id')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy('article_id', { descending: true });
       });
   });
@@ -91,7 +91,7 @@ describe('GET /api/articles?sort_by', () => {
       .get('/api/articles?sort_by=title')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy('title', { descending: true });
       });
   });
@@ -100,7 +100,7 @@ describe('GET /api/articles?sort_by', () => {
       .get('/api/articles?sort_by=comment_count')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy('comment_count', {
           descending: true,
           coerce: true,
@@ -123,7 +123,7 @@ describe('GET /api/articles?order', () => {
       .get('/api/articles?order=ASC')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy('created_at', { ascending: true });
       });
   });
@@ -132,7 +132,7 @@ describe('GET /api/articles?order', () => {
       .get('/api/articles?sort_by=article_id&order=ASC')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy('article_id', { ascending: true });
       });
   });
@@ -152,7 +152,7 @@ describe('GET /api/articles?topic', () => {
       .get('/api/articles?topic=mitch')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(4);
+        expect(articles.length).toBe(10);
         articles.forEach((article) => {
           expect(article.topic).toBe('mitch');
         });
@@ -172,6 +172,97 @@ describe('GET /api/articles?topic', () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe('Not Found');
+      });
+  });
+});
+
+describe('GET /api/articles?limit', () => {
+  test('200: Responds with a limited array of articles, default 10', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(10);
+      });
+  });
+  test('200: Response includes a total_count property of all articles matching filters (no filter by default)', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body: { articles, articleCount } }) => {
+        expect(articles.length).toBe(10);
+        expect(articleCount).toHaveProperty('total_count');
+        expect(articleCount.total_count).toBe(13);
+      });
+  });
+  test('200: Response includes a total_count property that reflects applied filters', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=mitch')
+      .expect(200)
+      .then(({ body: { articles, articleCount } }) => {
+        expect(articles.length).toBe(5);
+        expect(articleCount).toHaveProperty('total_count');
+        expect(articleCount.total_count).toBe(12);
+      });
+  });
+  test('200: Response displays dynamic range of results based on page value', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=mitch&p=1')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles[0].article_id).toBe(3);
+        expect(articles[1].article_id).toBe(6);
+        expect(articles[2].article_id).toBe(2);
+        expect(articles[3].article_id).toBe(12);
+        expect(articles[4].article_id).toBe(13);
+      });
+  });
+  test('200: Response increments dynamically based on page value', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=mitch&p=2')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles[0].article_id).toBe(1);
+        expect(articles[1].article_id).toBe(9);
+        expect(articles[2].article_id).toBe(10);
+        expect(articles[3].article_id).toBe(4);
+        expect(articles[4].article_id).toBe(8);
+      });
+  });
+  test('200: Response returns a limited array on final page of results', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=mitch&p=3')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(2);
+        expect(articles[0].article_id).toBe(11);
+        expect(articles[1].article_id).toBe(7);
+      });
+  });
+  test('200: Responds with an empty array if p value is beyond last page of results', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=cats&p=100')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(0);
+      });
+  });
+  test('400: Responds with an error message if limit value is NaN', () => {
+    return request(app)
+      .get('/api/articles?limit=break')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if p value is NaN', () => {
+    return request(app)
+      .get('/api/articles?p=break')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
       });
   });
 });
