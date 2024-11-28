@@ -1,6 +1,6 @@
 # Northcoders News API
 
-## 📝 Table of Contents
+## 📖 Table of Contents
 
 - [About](#about)
 - [Getting Started](#getting-started)
@@ -12,13 +12,11 @@
   - [Database seeding](#database-seeding)
 - [Special Thanks](#special-thanks)
 
-## 🧐 About <a name = "about"></a>
+## 🦇 About <a name = "about"></a>
 
 This REST API has been built to access application data programmatically.
 
 The intention is to mimic the construction of a real-world backend service (such as Reddit), which should provide information to frontend architecture.
-
-This project was built by [Wren Hawthorne](https://github.com/smlbrd) as part of the [Northcoders](https://northcoders.com/) JavaScript Software Development bootcamp.
 
 A hosted version of this project is [available online here](https://wren-nc-news.onrender.com/api). 
 
@@ -120,4 +118,4 @@ This project gratefully depends on the work of:
 
 ---
 
-This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
+This portfolio project was built by [Wren Hawthorne](https://github.com/smlbrd) as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
