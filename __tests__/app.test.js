@@ -41,6 +41,63 @@ describe('GET /api/topics', () => {
   });
 });
 
+describe('POST /api/topics', () => {
+  test('201: Responds with a new topic created from an input request body', () => {
+    const testBody = {
+      slug: 'coffee',
+      description: 'make brain go SO fast, actually',
+    };
+
+    return request(app)
+      .post('/api/topics')
+      .send(testBody)
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        expect(topic).toEqual(testBody);
+      });
+  });
+  test('400: Responds with an error message if slug property missing from request body', () => {
+    const testBody = {
+      description: 'make brain go SO fast, actually',
+    };
+
+    return request(app)
+      .post('/api/topics')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if description property missing from request body', () => {
+    const testBody = {
+      slug: 'coffee',
+    };
+
+    return request(app)
+      .post('/api/topics')
+      .send(testBody)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('409: Responds with an error message if topic already exists', () => {
+    const testBody = {
+      description: 'Not dogs',
+      slug: 'cats',
+    };
+
+    return request(app)
+      .post('/api/topics')
+      .send(testBody)
+      .expect(409)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Topic Already Exists!');
+      });
+  });
+});
+
 describe('GET /api/articles', () => {
   test('200: Responds with an array of article objects containing correct properties', () => {
     return request(app)
@@ -612,32 +669,32 @@ describe('GET /api/articles/:article_id/comments?p', () => {
     return request(app)
       .get('/api/articles/1/comments?limit=5&p=1')
       .expect(200)
-      .then(({ body: { comments }}) => {
+      .then(({ body: { comments } }) => {
         expect(comments.length).toBe(5);
         expect(comments[0].comment_id).toBe(5);
         expect(comments[4].comment_id).toBe(7);
-      })
-  })
+      });
+  });
 });
 test('200: Response increments dynamically based on page value', () => {
   return request(app)
-      .get('/api/articles/1/comments?limit=5&p=2')
-      .expect(200)
-      .then(({ body: { comments }}) => {
-        expect(comments.length).toBe(5);
-        expect(comments[0].comment_id).toBe(8);
-        expect(comments[4].comment_id).toBe(4);
-      })
+    .get('/api/articles/1/comments?limit=5&p=2')
+    .expect(200)
+    .then(({ body: { comments } }) => {
+      expect(comments.length).toBe(5);
+      expect(comments[0].comment_id).toBe(8);
+      expect(comments[4].comment_id).toBe(4);
+    });
 });
 test('200: Response returns a limited array on final page of results', () => {
   return request(app)
-      .get('/api/articles/1/comments?limit=5&p=3')
-      .expect(200)
-      .then(({ body: { comments }}) => {
-        expect(comments.length).toBe(1);
-        expect(comments[0].comment_id).toBe(9);
-      })
-})
+    .get('/api/articles/1/comments?limit=5&p=3')
+    .expect(200)
+    .then(({ body: { comments } }) => {
+      expect(comments.length).toBe(1);
+      expect(comments[0].comment_id).toBe(9);
+    });
+});
 test('400: Responds with an error message if p value is NaN', () => {
   return request(app)
     .get('/api/articles/1/comments?p=terodactyl')
