@@ -23,8 +23,9 @@ This project was built by [Wren Hawthorne](https://github.com/smlbrd) as part of
 A hosted version of this project is [available online here](https://wren-nc-news.onrender.com/api). 
 
 Clicking the link above will take you to a directory describing the endpoints accepted by the API, along with examples of accepted queries and typical responses.
+**Please be patient, as it can take a minute or two to spin up for the first time!**
 
-Please note: Your browser may require an extension to format the JSON file to be a little easier to read. For Chrome users, [this one](https://chromewebstore.google.com/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa?hl=en&pli=1) comes highly recommended!
+_Please note: Your browser may require an extension to format the JSON file to be a little easier to read. For Chrome users, [this one](https://chromewebstore.google.com/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa?hl=en&pli=1) comes highly recommended!_
 
 ## 🚀 Getting Started <a name = "getting-started"></a>
 
