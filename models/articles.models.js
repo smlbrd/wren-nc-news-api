@@ -1,11 +1,11 @@
 const db = require('../db/connection');
-const format = require('pg-format');
 
 exports.fetchArticles = (
   sort_by = 'created_at',
   order = 'DESC',
   topic,
-  limit = 10
+  limit = 10,
+  p = 1
 ) => {
   const validSortBy = [
     'created_at',
@@ -52,19 +52,42 @@ exports.fetchArticles = (
   queryString += ` GROUP BY articles.article_id 
   ORDER BY ${sort_by} ${order}`;
 
+  const validateLimit = Number(limit);
+  const validatePage = Number(p);
+
+  if (isNaN(validateLimit) || isNaN(validatePage)) {
+    return Promise.reject({ status: 400, msg: 'Bad Request' });
+  }
+
   queryString += ` LIMIT ${limit}`;
+
+  const offset = (p - 1) * limit;
+  queryString += ` OFFSET ${offset}`;
 
   return db.query(queryString, queryValues).then(({ rows }) => {
     return rows;
   });
 };
 
-exports.countArticles = () => {
-  return db
-    .query(`SELECT COUNT(article_id)::INT AS total_count FROM articles`)
-    .then(({ rows }) => {
-      return rows[0];
-    });
+exports.countArticles = (topic, limit = 10, p = 1) => {
+  let countString = `SELECT COUNT(DISTINCT article_id)::INT AS total_count FROM articles`;
+
+  const countValues = [];
+
+  if (topic) {
+    countString += ` WHERE articles.topic = $1`;
+    countValues.push(topic);
+  }
+
+  return db.query(countString, countValues).then(({ rows }) => {
+    const totalArticles = rows[0].total_count;
+    const totalPages = Math.ceil(totalArticles / limit);
+
+    if (totalPages > 0 && totalPages < p) {
+      return [];
+    }
+    return rows[0];
+  });
 };
 
 exports.addArticle = (

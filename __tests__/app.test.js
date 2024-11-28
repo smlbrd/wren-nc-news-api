@@ -195,12 +195,76 @@ describe('GET /api/articles?limit', () => {
         expect(articleCount.total_count).toBe(13);
       });
   });
-  // 200 Response includes a total_count property that reflects any filters (topic = 'mitch')
-  // 200 Response increments dynamically when limit changes (limit 5, p1 = articles 1-5)
-  // 200 Response increments dynamically when p changes (limit 5, p2 = articles 6-11)
-  // 400 limit value is NaN
-  // 400 p value is NaN
-  // 404 p request beyond maximum entries
+  test('200: Response includes a total_count property that reflects applied filters', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=mitch')
+      .expect(200)
+      .then(({ body: { articles, articleCount } }) => {
+        expect(articles.length).toBe(5);
+        expect(articleCount).toHaveProperty('total_count');
+        expect(articleCount.total_count).toBe(12);
+      });
+  });
+  test('200: Response displays dynamic range of results based on page value', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=mitch&p=1')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles[0].article_id).toBe(3);
+        expect(articles[1].article_id).toBe(6);
+        expect(articles[2].article_id).toBe(2);
+        expect(articles[3].article_id).toBe(12);
+        expect(articles[4].article_id).toBe(13);
+      });
+  });
+  test('200: Response increments dynamically based on page value', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=mitch&p=2')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles[0].article_id).toBe(1);
+        expect(articles[1].article_id).toBe(9);
+        expect(articles[2].article_id).toBe(10);
+        expect(articles[3].article_id).toBe(4);
+        expect(articles[4].article_id).toBe(8);
+      });
+  });
+  test('200: Response returns a limited array on final page of results', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=mitch&p=3')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(2);
+        expect(articles[0].article_id).toBe(11);
+        expect(articles[1].article_id).toBe(7);
+      });
+  });
+  test('200: Responds with an empty array if p value is beyond last page of results', () => {
+    return request(app)
+      .get('/api/articles?limit=5&topic=cats&p=100')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(0);
+      });
+  });
+  test('400: Responds with an error message if limit value is NaN', () => {
+    return request(app)
+      .get('/api/articles?limit=break')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('400: Responds with an error message if p value is NaN', () => {
+    return request(app)
+      .get('/api/articles?p=break')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
 });
 
 describe('POST /api/articles', () => {

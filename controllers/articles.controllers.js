@@ -10,9 +10,12 @@ const {
 } = require('../models/articles.models');
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, topic, limit } = req.query;
+  const { sort_by, order, topic, limit, p } = req.query;
 
-  const promiseArr = [fetchArticles(sort_by, order, topic, limit), countArticles()];
+  const promiseArr = [
+    fetchArticles(sort_by, order, topic, limit, p),
+    countArticles(topic, limit, p),
+  ];
 
   if (topic) {
     promiseArr.push(checkExists('topics', 'slug', topic));
