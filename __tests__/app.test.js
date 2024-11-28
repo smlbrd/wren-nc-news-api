@@ -208,7 +208,7 @@ describe('POST /api/articles', () => {
     };
 
     const defaultImgUrl =
-      'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700';
+      'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700';
 
     return request(app)
       .post('/api/articles')

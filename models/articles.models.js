@@ -56,7 +56,7 @@ exports.addArticle = (
   title,
   body,
   topic,
-  article_img_url = 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+  article_img_url = 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
 ) => {
   if (!author || !title || !body || !topic) {
     return Promise.reject({
