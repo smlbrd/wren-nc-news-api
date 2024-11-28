@@ -9,6 +9,18 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "creates a new topic based on request body",
+    "queries": [],
+    "exampleBody": {
+      "slug": "coffee",
+      "description": "make brain go SO fast, actually"
+    },
+    "exampleResponse": {
+      "slug": "coffee",
+      "description": "make brain go SO fast, actually"
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles, defaults to sorting by created_at date in descending order",
     "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
