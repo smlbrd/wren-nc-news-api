@@ -4,6 +4,7 @@ const app = require('../db/app');
 const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
 const data = require('../db/data/test-data');
+const { checkExists } = require('../db/seeds/utils');
 
 afterAll(() => {
   return db.end();
@@ -836,7 +837,7 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
 });
 
-describe('DELETE /api/comments/comment_id', () => {
+describe('DELETE /api/comments/:comment_id', () => {
   test('204: Responds with status code after deleting given comment_id from table', () => {
     return request(app).delete('/api/comments/2').expect(204);
   });
@@ -1012,5 +1013,28 @@ describe('404: Non-existent route query', () => {
       .then(({ body: { msg } }) => {
         expect(msg).toBe(`Not Found`);
       });
+  });
+});
+
+describe('checkExists', () => {
+  test('200: returns a resolved promise when input value exists in a table', () => {
+    const testTable = 'articles';
+    const testColumn = 'article_id';
+    const testValue = 1;
+
+    checkExists(testTable, testColumn, testValue).then(({ status, msg }) => {
+      expect(status).toBe(200);
+      expect(msg).toBe('OK');
+    });
+  });
+  test('404: returns a resolved promise when input value exists in a table', () => {
+    const testTable = 'articles';
+    const testColumn = 'article_id';
+    const testValue = 1000001;
+
+    checkExists(testTable, testColumn, testValue).then(({ status, msg }) => {
+      expect(status).toBe(404);
+      expect(msg).toBe('Not Found');
+    });
   });
 });

@@ -61,7 +61,6 @@ exports.fetchArticles = (
   }
 
   queryString += ` LIMIT ${limit}`;
-
   queryString += ` OFFSET ${offset}`;
 
   return db.query(queryString, queryValues).then(({ rows }) => {
