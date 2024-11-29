@@ -18,7 +18,7 @@ This RESTful API has been built to access application data programmatically usin
 
 The intention is to mimic the construction of a real-world backend news service (such as Reddit), which should provide information to frontend architecture. 
 
-It allows a client to post, get, patch and delete articles, topics, users and comments, and accepts complex database queries using parametric endpoints manipulate data by sorting, ordering, limiting and paginating the response.
+It allows a client to post, get, patch and delete articles, topics, users and comments. It also accepts complex database queries using parametric endpoints, manipulating data to sort, order, limit and paginate the response.
 
 It has been designed with the Model View Controller (MVC) pattern and developed using Test-Driven Development (TDD).
 
