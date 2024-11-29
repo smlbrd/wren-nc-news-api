@@ -4,6 +4,7 @@ const {
   addArticle,
   fetchArticleById,
   updateArticleById,
+  removeArticleById,
   fetchCommentsByArticleId,
   addCommentByArticleId,
   countArticles,
@@ -31,7 +32,7 @@ exports.getArticles = (req, res, next) => {
 exports.postArticle = (req, res, next) => {
   const { author, title, body, topic, article_img_url } = req.body;
 
-  return addArticle(author, title, body, topic, article_img_url)
+  addArticle(author, title, body, topic, article_img_url)
     .then((article_id) => {
       return fetchArticleById(article_id).then((article) => {
         res.status(201).send({ article });
@@ -40,10 +41,22 @@ exports.postArticle = (req, res, next) => {
     .catch(next);
 };
 
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+
+  checkExists('articles', 'article_id', article_id)
+    .then(() => {
+      return removeArticleById(article_id).then(() => {
+        res.sendStatus(204);
+      });
+    })
+    .catch(next);
+};
+
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
 
-  return fetchArticleById(article_id)
+  fetchArticleById(article_id)
     .then((article) => {
       res.status(200).send({ article });
     })
