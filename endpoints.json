@@ -284,6 +284,10 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "removes the article at a given article_id, along with any related comments",
+    "queries": []
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "serves all comments for a specific article_id, most recent comment first",
     "queries": [],

@@ -584,6 +584,48 @@ describe('PATCH /api/articles/:article_id', () => {
   });
 });
 
+describe('DELETE /api/articles/:article_id', () => {
+  test('204: Responds with status code after deleting given article_id from table', () => {
+    return request(app).delete('/api/articles/3').expect(204);
+  });
+  test('400: Responds with an error message if article_id is NaN', () => {
+    return request(app)
+      .delete('/api/articles/bibimbap')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test("404: Responds with an error message if article_id doesn't exist", () => {
+    return request(app)
+      .delete('/api/articles/1000001')
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Not Found');
+      });
+  });
+  test('404: Responds with an error message if attempting to fetch deleted article', () => {
+    return db.query('DELETE FROM articles WHERE article_id = 2;').then(() => {
+      return request(app)
+        .get('/api/articles/article_id/2')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe('Not Found');
+        });
+    });
+  });
+  test('404: Responds with an error message if attempting to fetch comment linked to deleted article', () => {
+    return db.query('DELETE FROM articles WHERE article_id = 3;').then(() => {
+      return request(app)
+        .get('/api/articles/article_id/10')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe('Not Found');
+        });
+    });
+  });
+});
+
 describe('GET /api/articles/:article_id/comments', () => {
   test('200: Responds with all comments for a given article_id, containing correct properties', () => {
     return request(app)

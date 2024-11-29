@@ -162,6 +162,13 @@ exports.updateArticleById = (article_id, inc_votes) => {
   });
 };
 
+exports.removeArticleById = (article_id) => {
+  return db
+    .query(`DELETE FROM articles WHERE article_id = $1 RETURNING *`, [
+      article_id,
+    ])
+};
+
 exports.fetchCommentsByArticleId = (article_id, limit = 10, p = 1) => {
   let queryString = `SELECT comment_id
     , votes
