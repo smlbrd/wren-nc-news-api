@@ -14,11 +14,15 @@
 
 ## 🦇 About <a name = "about"></a>
 
-This REST API has been built to access application data programmatically.
+This RESTful API has been built to access application data programmatically using CRUD operations.
 
-The intention is to mimic the construction of a real-world backend service (such as Reddit), which should provide information to frontend architecture.
+The intention is to mimic the construction of a real-world backend news service (such as Reddit), which should provide information to frontend architecture. 
 
-A hosted version of this project is [available online here](https://wren-nc-news.onrender.com/api). Please be patient, as it can take a minute or two to spin up for the first time!
+It allows a client to post, get, patch and delete articles, topics, users and comments, and accepts complex database queries using parametric endpoints manipulate data by sorting, ordering, limiting and paginating the response.
+
+It has been designed with the Model View Controller (MVC) pattern and developed using Test-Driven Development (TDD).
+
+A hosted version of this project is [available online here](https://wren-nc-news.onrender.com/api).
 
 Clicking the link above will take you to a directory describing the endpoints accepted by the API, along with examples of accepted queries and typical responses.
 **Please be patient, as it can take a minute or two to spin up for the first time!**
