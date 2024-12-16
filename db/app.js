@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 
 const app = express();
@@ -11,6 +12,7 @@ const {
   notFoundErrorHandler,
 } = require('../db/errors/index');
 
+app.use(express.cors());
 app.use(express.json());
 
 app.use('/api', apiRouter);
