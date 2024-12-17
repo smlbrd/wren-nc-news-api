@@ -418,7 +418,7 @@
       "votes": 0
     }
   },
-  "PATCH /api/articles/:article_id/comments": {
+  "PATCH /api/articles/:article_id": {
     "description": "returns a given article_id with votes property updated based on request body",
     "queries": [],
     "exampleBody": {
@@ -436,7 +436,7 @@
     }
   },
   "PATCH /api/comments/comment_id": {
-    "description": "removes the comment at a given comment_id",
+    "description": "returns a given comment with votes property updated based on request body",
     "queries": [],
     "exampleBody": { "inc_votes": 1 },
     "exampleResponse": {
