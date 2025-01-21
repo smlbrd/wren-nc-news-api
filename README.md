@@ -72,7 +72,7 @@ To set up test and development databases and run this API, create these 2 files 
   - This file should contain: `PGDATABASE=nc_news_test`
 
 - `.env.development`
-  - This file should contain: `PGDATABASE_nc_news`
+  - This file should contain: `PGDATABASE=nc_news`
 
 Now we're ready to seed our databases!
 
